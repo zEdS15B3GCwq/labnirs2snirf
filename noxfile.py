@@ -79,7 +79,7 @@ def lint(session):
 def type_check(session):
     """Run type checking with mypy."""
     session.install("-e", ".")
-    session.install("mypy")
+    session.install("mypy", "pytest", "h5py")
     session.run("mypy", "labnirs2snirf", "tests")
 
 

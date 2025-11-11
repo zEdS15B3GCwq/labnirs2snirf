@@ -117,7 +117,7 @@ repos:
     - id: nox-tests
       name: Run tests with nox
       entry: nox
-      args: ["-t", "pre-commits"]
+      args: ["-t", "pre-commit"]
       language: system
       pass_filenames: false
       types: [python]

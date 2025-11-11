@@ -1,5 +1,4 @@
 import json
-import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
@@ -14,6 +13,7 @@ def get_coverage_color(pct):
     if pct >= 60:
         return "orange"
     return "red"
+
 
 repo_dir = Path(__file__).parent.parent
 
