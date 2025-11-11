@@ -1,0 +1,20 @@
+[project]
+name = "labnirs2snirf"
+version = "0.1.0"
+description = "Converts exported Shimadzu LabNirs recordings to SNIRF format."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "polars>=1.24.0",
+    "h5py>=3.13.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "nox>=2024.10.9",
+    "pre-commit>=4.4.0",
+]

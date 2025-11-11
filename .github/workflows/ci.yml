@@ -1,0 +1,211 @@
+name: ci
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.13t", "3.14t"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - python-version: "3.14"
+            os: windows-latest
+          - python-version: "3.14"
+            os: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Python, UV and Nox
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run tests
+        run: nox -s tests --force-python ${{ matrix.python-version }}
+
+  test_with_coverage:
+    name: Test & Coverage (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy: &default-strategy
+      matrix:
+        python-version: ["3.14"]
+        os: [ubuntu-latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Python, UV and Nox
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run tests with coverage
+        run: nox -s tests_with_coverage --force-python ${{ matrix.python-version }}
+
+      - name: Extract coverage badge data
+        run: python ${{ github.workspace }}/.github/extract_coverage.py
+
+      - name: Upload coverage badge
+        uses: actions/upload-artifact@v5
+        with:
+          name: coverage-badge
+          path: badges/coverage.json
+
+      - name: Upload coverage HTML report
+        uses: actions/upload-artifact@v5
+        with:
+          name: coverage-html
+          path: htmlcov/
+
+  lint:
+    name: Lint with Ruff (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy: *default-strategy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Python, UV and Nox
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run linting
+        run: nox -s lint --force-python ${{ matrix.python-version }}
+
+  type_check:
+    name: Type Check with Mypy (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python-version: ["3.14"]
+        os: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - run: nox -s type_check --force-python ${{ matrix.python-version }}
+
+  format:
+    name: Code Formatting Check (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy: *default-strategy
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Python, UV and Nox
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run format check
+        run: nox -s fmt_check --force-python ${{ matrix.python-version }}
+
+  install:
+    name: Installation Test (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14", "3.13t", "3.14t"]
+        os: ["ubuntu-latest", "windows-latest", "macos-latest"]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Python, UV and Nox
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run installation test
+        run: nox -s install_test  --force-python ${{ matrix.python-version }}
+
+  docs:
+    name: Build & Deploy Docs (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    strategy: *default-strategy
+    needs: test_with_coverage
+
+    # Allow only one deployment at a time to avoid conflicts.
+    # Do not cancel in-progress deployments.
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
+
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup Python, UV and Nox
+        uses: ./.github/actions/setup-python-env
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Build documentation
+        run: nox -s docs --force-python ${{ matrix.python-version }}
+
+      - name: Download coverage badge artifact into docs/
+        uses: actions/download-artifact@v6
+        with:
+          name: coverage-badge
+          path: ./docs/_build/html/badges
+
+      - name: Download coverage HTML report artifact into docs/
+        uses: actions/download-artifact@v6
+        with:
+          name: coverage-html
+          path: ./docs/_build/html/htmlcov
+
+      - name: Upload combined artifact to Pages
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./docs/_build/html
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
