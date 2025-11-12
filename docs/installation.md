@@ -10,7 +10,7 @@
 To install the latest development version from source:
 
 ```bash
-git clone https://github.com/yourusername/labnirs2snirf.git
+git clone git clone https://github.com/zEdS15B3GCwq/labnirs2snirf.git
 cd labnirs2snirf
 pip install .
 ```
