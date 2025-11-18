@@ -3,8 +3,8 @@ Unit tests for labnirs module.
 """
 
 import logging
-from pathlib import Path
 from unittest.mock import patch
+from typing import TYPE_CHECKING
 
 import numpy as np
 import polars as pl
@@ -24,9 +24,8 @@ from labnirs2snirf.labnirs import (
     read_probe_pairs,
 )
 
-# Test data directory
-TEST_DATA_DIR = Path(__file__).parent
-
+if TYPE_CHECKING:
+    from conftest import TEST_DATA_DIR
 
 class TestExtractData:
     """Tests for the _extract_data function."""
@@ -1910,7 +1909,7 @@ class TestReadProbePairs:
     def test_read_probe_pairs_pathlib_path_succeeds(self):
         """Test that function accepts pathlib.Path objects."""
 
-        path = Path(TEST_DATA_DIR) / "minimal_labnirs.txt"
+        path = TEST_DATA_DIR / "minimal_labnirs.txt"
         result = read_probe_pairs(path)
 
         assert isinstance(result, str)

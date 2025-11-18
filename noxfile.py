@@ -26,7 +26,7 @@ nox.options.sessions = [
 nox.options.default_venv_backend = "uv|virtualenv"
 
 # Disable automatic Python downloads by nox, which is enabled by the UV backend
-nox.options.download_python = "never"
+# nox.options.download_python = "never"
 
 
 @nox.session(python=PYTHON_OTHER_VERSIONS)

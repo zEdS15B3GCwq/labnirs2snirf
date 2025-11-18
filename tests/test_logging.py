@@ -13,7 +13,7 @@ from labnirs2snirf.labnirs import read_labnirs
 from labnirs2snirf.labnirs2snirf import main
 from labnirs2snirf.log import LOGFILE_NAME, config_logger
 
-MINIMAL_LABNIRS_FILE_PATH = Path(__file__).parent / "minimal_labnirs.txt"
+MINIMAL_LABNIRS_FILE_PATH = Path(__file__).parent / "data" / "minimal_labnirs.txt"
 
 
 @pytest.fixture(name="outfile_path")

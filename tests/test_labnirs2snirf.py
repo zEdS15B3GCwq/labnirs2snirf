@@ -10,6 +10,7 @@ import subprocess
 import sys
 from pathlib import Path
 from unittest.mock import patch
+from typing import TYPE_CHECKING
 
 import h5py
 import numpy as np
@@ -17,8 +18,9 @@ import pytest
 
 from labnirs2snirf.labnirs2snirf import main
 
-# Test data directory
-TEST_DATA_DIR = Path(__file__).parent
+if TYPE_CHECKING:
+    from conftest import TEST_DATA_DIR
+
 
 MINIMAL_LABNIRS_FILE = TEST_DATA_DIR / "minimal_labnirs.txt"
 SMALL_LABNIRS_FILE = TEST_DATA_DIR / "small_labnirs.txt"
