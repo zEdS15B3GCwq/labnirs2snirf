@@ -7,8 +7,8 @@ This page contains the API documentation for labnirs2snirf.
 ```{eval-rst}
 .. automodule:: labnirs2snirf
    :members:
-   :undoc-members:
    :show-inheritance:
+   :exclude-members: model
 ```
 
 Modules that are needed for running as a script are listed on the Script page.
@@ -18,8 +18,8 @@ Modules that are needed for running as a script are listed on the Script page.
 ```{eval-rst}
 .. automodule:: labnirs2snirf.labnirs
    :members:
-   :undoc-members:
    :show-inheritance:
+   :exclude-members: model
 ```
 
 ## SNIRF Writer
@@ -27,8 +27,8 @@ Modules that are needed for running as a script are listed on the Script page.
 ```{eval-rst}
 .. automodule:: labnirs2snirf.snirf
    :members:
-   :undoc-members:
    :show-inheritance:
+   :exclude-members: model
 ```
 
 ## Probe Layout
@@ -36,8 +36,8 @@ Modules that are needed for running as a script are listed on the Script page.
 ```{eval-rst}
 .. automodule:: labnirs2snirf.layout
    :members:
-   :undoc-members:
    :show-inheritance:
+   :exclude-members: Nirs
 ```
 
 ## Error Handling
@@ -45,7 +45,6 @@ Modules that are needed for running as a script are listed on the Script page.
 ```{eval-rst}
 .. automodule:: labnirs2snirf.error
    :members:
-   :undoc-members:
    :show-inheritance:
 ```
 
@@ -54,6 +53,5 @@ Modules that are needed for running as a script are listed on the Script page.
 ```{eval-rst}
 .. automodule:: labnirs2snirf.model
    :members:
-   :undoc-members:
    :show-inheritance:
 ```

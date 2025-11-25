@@ -6,10 +6,8 @@ See https://github.com/fNIRS/snirf/blob/v1.1/snirf_specification.md for details.
 """
 
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    import numpy as np
+import numpy as np
 
 
 @dataclass(slots=True, frozen=True)

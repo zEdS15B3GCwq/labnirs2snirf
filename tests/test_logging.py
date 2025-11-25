@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from pathlib import Path
 from unittest.mock import patch
 
 import pytest
@@ -12,8 +11,6 @@ from labnirs2snirf.error import Labnirs2SnirfError
 from labnirs2snirf.labnirs import read_labnirs
 from labnirs2snirf.labnirs2snirf import main
 from labnirs2snirf.log import LOGFILE_NAME, config_logger
-
-MINIMAL_LABNIRS_FILE_PATH = Path(__file__).parent / "data" / "minimal_labnirs.txt"
 
 
 @pytest.fixture(name="outfile_path")
@@ -174,12 +171,17 @@ class TestConsoleVsFileLogging:
 class TestExceptionHandling:
     """Test exception handling in script vs library mode."""
 
-    def test_main_catches_all_exceptions_succeeds(self, capsys, outfile_path):
+    def test_main_catches_all_exceptions_succeeds(
+        self,
+        capsys,
+        outfile_path,
+        minimal_data_path,
+    ):
         """main() should catch all exceptions and return 1."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path)],
+            ["prog", str(minimal_data_path), str(outfile_path)],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = RuntimeError("Simulated error")
@@ -192,12 +194,17 @@ class TestExceptionHandling:
         assert "Something went wrong" in captured.out
         assert "Simulated error" not in output
 
-    def test_main_exception_logged_with_verbosity_succeeds(self, capsys, outfile_path):
+    def test_main_exception_logged_with_verbosity_succeeds(
+        self,
+        capsys,
+        outfile_path,
+        minimal_data_path,
+    ):
         """Exceptions in main() should be logged when verbosity enabled."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path), "-v"],
+            ["prog", str(minimal_data_path), str(outfile_path), "-v"],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = RuntimeError("Simulated error")
@@ -215,12 +222,13 @@ class TestExceptionHandling:
         outfile_path,
         logfile_path,
         capsys,
+        minimal_data_path,
     ):
         """Exceptions in main() should be logged to file when --log used."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path), "--log"],
+            ["prog", str(minimal_data_path), str(outfile_path), "--log"],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = RuntimeError("Simulated error")
@@ -235,12 +243,12 @@ class TestExceptionHandling:
         assert "Simulated error" in content
         assert "Exception received" in content
 
-    def test_library_mode_raises_exceptions_fails(self):
+    def test_library_mode_raises_exceptions_fails(self, minimal_data_path):
         """Direct function calls should raise exceptions normally."""
 
         with pytest.raises(Exception):
             # Invalid keep_category should raise
-            read_labnirs(MINIMAL_LABNIRS_FILE_PATH, keep_category="invalid")
+            read_labnirs(minimal_data_path, keep_category="invalid")
 
     def test_argument_error_before_logger_setup_fails(self, capsys):
         """ArgumentError during parsing should print to stdout without logging."""
@@ -258,12 +266,17 @@ class TestExceptionHandling:
         # No traceback or exception details
         assert "Traceback" not in captured.out
 
-    def test_labnirs2snirf_error_with_logger_fails(self, capsys, outfile_path):
+    def test_labnirs2snirf_error_with_logger_fails(
+        self,
+        capsys,
+        outfile_path,
+        minimal_data_path,
+    ):
         """Labnirs2SnirfError with logger setup should be logged."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path), "-v"],
+            ["prog", str(minimal_data_path), str(outfile_path), "-v"],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = Labnirs2SnirfError("Test conversion failure")
@@ -278,12 +291,17 @@ class TestExceptionHandling:
         assert "Something went wrong" not in output
         assert "Traceback" not in captured.out
 
-    def test_labnirs2snirf_error_without_logger_fails(self, capsys, outfile_path):
+    def test_labnirs2snirf_error_without_logger_fails(
+        self,
+        capsys,
+        outfile_path,
+        minimal_data_path,
+    ):
         """Labnirs2SnirfError without logger should print to stdout."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path)],
+            ["prog", str(minimal_data_path), str(outfile_path)],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = Labnirs2SnirfError("Test conversion failure")
@@ -298,12 +316,17 @@ class TestExceptionHandling:
         assert "Something went wrong" not in output
         assert "Traceback" not in captured.out
 
-    def test_unknown_exception_with_logger_fails(self, capsys, outfile_path):
+    def test_unknown_exception_with_logger_fails(
+        self,
+        capsys,
+        outfile_path,
+        minimal_data_path,
+    ):
         """Unknown exception with logger should log full details."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path), "-v"],
+            ["prog", str(minimal_data_path), str(outfile_path), "-v"],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = ValueError("Unexpected value error")
@@ -318,12 +341,17 @@ class TestExceptionHandling:
         assert "Exception received" in output and "Unexpected value error" in output
         assert "Logging not configured" not in output
 
-    def test_unknown_exception_without_logger_fails(self, capsys, outfile_path):
+    def test_unknown_exception_without_logger_fails(
+        self,
+        capsys,
+        outfile_path,
+        minimal_data_path,
+    ):
         """Unknown exception without logger should dump to stderr."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path)],
+            ["prog", str(minimal_data_path), str(outfile_path)],
         ):
             with patch("labnirs2snirf.args.Arguments.parse") as mock_parse:
                 mock_parse.side_effect = ValueError("Unexpected value error")
@@ -376,14 +404,19 @@ class TestModuleLevelLogging:
 class TestEndToEndLogging:
     """Test logging through complete conversion process."""
 
-    def test_successful_conversion_logs_succeeds(self, tmp_path, capsys):
+    def test_successful_conversion_logs_succeeds(
+        self,
+        tmp_path,
+        capsys,
+        minimal_data_path,
+    ):
         """Successful conversion should produce appropriate log messages."""
         target = tmp_path / "out.snirf"
 
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(target), "-vv"],
+            ["prog", str(minimal_data_path), str(target), "-vv"],
         ):
             result = main()
 

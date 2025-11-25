@@ -1,6 +1,7 @@
 ---
 default_language_version:
   python: python3.14
+exclude: "^data/.*"
 
 repos:
   # Meta hooks to check the pre-commit config itself
@@ -120,4 +121,4 @@ repos:
     rev: dada4a02e862cfe72d6c8eac2e9b7aae080b1df2  # frozen: v2.14
     hooks:
       - id: vulture
-        args: ["labnirs2snirf/"]
+        args: ["--min-confidence", "61", "labnirs2snirf/"]

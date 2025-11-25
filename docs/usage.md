@@ -122,7 +122,7 @@ columns:
 
 Example layout.sfp:
 
-```csv
+```text
 S1\t10.0\t0.0\t5.0
 D1\t15.0\t0.0\t1.0
 ```

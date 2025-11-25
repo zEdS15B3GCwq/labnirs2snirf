@@ -418,6 +418,33 @@ def read_labnirs(
     )
 
 
+def read_probe_pairs(data_file: Path) -> str:  # noqa: F841
+    """
+    Read the header line containing probe pairs.
+
+    Parameters
+    ----------
+    data_file : Path
+        Path to the LabNIRS data file.
+        File is expected to be in the format exported by the LabNIRS software,
+        with 35 lines of header and a version number/header type of 11.0.
+
+    Returns
+    -------
+    str
+        String containing probe pairs without leading and trailing whitespace.
+        For example: "(1,1)(2,1)...".
+    """
+    log.info("Reading probe pairs from file: %s", data_file)
+    if not data_file.exists():
+        raise LabNirsReadError(f"Data file not found: {data_file}")
+
+    header = _read_header(data_file)
+    pairs_str = header[32].strip()
+    log.debug("Found probe pairs string: %s", pairs_str)
+    return pairs_str
+
+
 def _extract_data(data: pl.DataFrame, columns: pl.DataFrame) -> model.Data:
     """
     Compile data into a model.Data object.

@@ -27,10 +27,11 @@ def config_logger(file_logging: bool = False, verbosity_level: int = 0) -> None:
         be printed to the console.
     verbosity_level : int, default = 0
         The verbosity level of the log messages. Must be between 0 and 3.
-        0: disabled (no logging)
-        1: WARNING (warnings and above)
-        2: INFO (informational messages and above)
-        3: DEBUG (debugging messages and above)
+        Possible values:
+        - 0: disabled (no logging)
+        - 1: WARNING (warnings and above)
+        - 2: INFO (informational messages and above)
+        - 3: DEBUG (debugging messages and above)
 
     Notes
     -----

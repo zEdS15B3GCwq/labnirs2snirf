@@ -8,6 +8,7 @@ import logging
 import runpy
 import subprocess
 import sys
+from pathlib import Path
 from unittest.mock import patch
 
 import h5py
@@ -972,10 +973,10 @@ class TestMainEdgeCases:
         """Test conversion with relative paths."""
         monkeypatch.chdir(test_data_dir.parent)
 
-        relative_input = "tests/minimal_labnirs.txt"
+        relative_input = Path("test") / "minimal_labnirs.txt"
         output = output_snirf
 
-        with patch.object(sys, "argv", ["prog", relative_input, output]):
+        with patch.object(sys, "argv", ["prog", str(relative_input), str(output)]):
             result = main()
 
         assert result == 0

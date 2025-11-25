@@ -1,3 +1,5 @@
+"""Configure Sphinx."""
+
 import os
 import sys
 

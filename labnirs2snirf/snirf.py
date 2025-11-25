@@ -59,7 +59,7 @@ def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
         # the use of a non-indexed entry is also allowed if there's only one.
         # Some tools (e.g. MNE) only accept a non-indexed /nirs.
         nirs_group = f.create_group("/nirs")
-        f.create_dataset("formatVersion", data=str_encode(SPECS_FORMAT_VERSION))
+        f.create_dataset("formatVersion", data=_str_encode(SPECS_FORMAT_VERSION))
         _write_metadata_group(nirs.metadata, nirs_group.create_group("metaDataTags"))
         _write_data_group(nirs.data[0], nirs_group.create_group("data1"))
         _write_probe_group(nirs.probe, nirs_group.create_group("probe"))
@@ -70,7 +70,7 @@ def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
     log.debug("SNIRF file write completed")
 
 
-def str_encode(s: str) -> bytes:
+def _str_encode(s: str) -> bytes:
     """
     Encode a string to bytes using UTF-8 encoding.
 
@@ -108,14 +108,14 @@ def _write_metadata_group(metadata: model.Metadata, group: h5py.Group) -> None:
         log.error("Metadata group must be at /nirs/metaDataTags, got %s", group.name)
         raise SnirfWriteError("Metadata group must be at /nirs/metaDataTags")
 
-    group.create_dataset("SubjectID", data=str_encode(metadata.SubjectID))
-    group.create_dataset("MeasurementDate", data=str_encode(metadata.MeasurementDate))
-    group.create_dataset("MeasurementTime", data=str_encode(metadata.MeasurementTime))
-    group.create_dataset("LengthUnit", data=str_encode(metadata.LengthUnit))
-    group.create_dataset("TimeUnit", data=str_encode(metadata.TimeUnit))
-    group.create_dataset("FrequencyUnit", data=str_encode(metadata.FrequencyUnit))
+    group.create_dataset("SubjectID", data=_str_encode(metadata.SubjectID))
+    group.create_dataset("MeasurementDate", data=_str_encode(metadata.MeasurementDate))
+    group.create_dataset("MeasurementTime", data=_str_encode(metadata.MeasurementTime))
+    group.create_dataset("LengthUnit", data=_str_encode(metadata.LengthUnit))
+    group.create_dataset("TimeUnit", data=_str_encode(metadata.TimeUnit))
+    group.create_dataset("FrequencyUnit", data=_str_encode(metadata.FrequencyUnit))
     for field, text in metadata.additional_fields.items():
-        group.create_dataset(field, data=str_encode(text))
+        group.create_dataset(field, data=_str_encode(text))
 
 
 def _write_data_group(data: model.Data, group: h5py.Group) -> None:
@@ -152,7 +152,7 @@ def _write_data_group(data: model.Data, group: h5py.Group) -> None:
         ml.create_dataset("dataType", data=row.dataType, dtype="int32")
         ml.create_dataset("dataTypeIndex", data=row.dataTypeIndex, dtype="int32")
         if row.dataTypeLabel is not None:
-            ml.create_dataset("dataTypeLabel", data=str_encode(row.dataTypeLabel))
+            ml.create_dataset("dataTypeLabel", data=_str_encode(row.dataTypeLabel))
 
 
 def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
@@ -192,7 +192,7 @@ def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
             len(stim.data),
             st.name,
         )
-        st.create_dataset("name", data=str_encode(stim.name))
+        st.create_dataset("name", data=_str_encode(stim.name))
         d = np.zeros((len(stim.data), 3), dtype=stim.data.dtype)
         d[:, 0] = stim.data
         d[:, 2] = 1
