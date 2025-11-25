@@ -59,7 +59,7 @@ jobs:
           enable-cache: true
 
       - name: run mypy
-        run: uvx --python ${{ matrix.python-version }} mypy testmodule tests
+        run: uvx --python ${{ matrix.python-version }} mypy labnirs2snirf tests
         shell: bash
 
   precommit:
