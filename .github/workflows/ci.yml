@@ -58,8 +58,8 @@ jobs:
         with:
           enable-cache: true
 
-      - name: run mypy
-        run: uvx --python ${{ matrix.python-version }} mypy labnirs2snirf tests
+      - name: run mypy check with nox
+        run: uvx nox -s type_check --force-python ${{ matrix.python-version }}
         shell: bash
 
   precommit:
