@@ -94,8 +94,6 @@ jobs:
             --show-diff-on-failure \
             --color=always
         shell: bash
-        env:
-          SKIP: mypy
 
       - name: run pre-commit (push to main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -107,4 +105,4 @@ jobs:
             --color=always
         shell: bash
         env:
-          SKIP: mypy,no-commit-to-branch
+          SKIP: no-commit-to-branch

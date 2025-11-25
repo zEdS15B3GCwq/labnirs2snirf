@@ -110,7 +110,6 @@ jobs:
         id: run-precommit
         continue-on-error: true
         env:
-          SKIP: mypy
           CHANGED_FILES: ${{ needs.prepare.outputs.changed_files }}
         run: |
           # Validate file list exists is not empty
