@@ -44,7 +44,8 @@ def read_labnirs(
     keep_category: str = "all",
     drop_subtype: Collection[str] | None = None,
 ) -> model.Nirs:
-    """Reads and processes a LabNIRS data file and returns a NIRS data model.
+    """
+    Read and process a LabNIRS data file and returns a NIRS data model.
 
     Parameters
     ----------
@@ -117,7 +118,7 @@ def read_labnirs(
     keep_category = keep_category.lower()
     if keep_category not in ("hb", "raw", "all"):
         raise LabNirsReadError(
-            f"Invalid parameters: 'keep_category': must be one of 'hb', 'raw', or 'all', got {keep_category}."
+            f"Invalid parameters: 'keep_category': must be one of 'hb', 'raw', or 'all', got {keep_category}.",
         )
     if drop_subtype is not None:
         if not (
@@ -125,12 +126,12 @@ def read_labnirs(
             and all(isinstance(x, str) for x in drop_subtype)
         ):
             raise LabNirsReadError(
-                "Invalid parameters: 'drop_subtype' must be a collection of strings or None."
+                "Invalid parameters: 'drop_subtype' must be a collection of strings or None.",
             )
         drop_subtype = {x.lower() for x in drop_subtype}
         if not all(x in {"hbo", "hbr", "hbt"} or x.isdigit() for x in drop_subtype):
             raise LabNirsReadError(
-                "Invalid parameters: 'drop_subtype' can only contain 'hbo', 'hbr', 'hbt', or wavelength integers."
+                "Invalid parameters: 'drop_subtype' can only contain 'hbo', 'hbr', 'hbt', or wavelength integers.",
             )
     if not data_file.exists():
         log.error("Data file not found: %s", data_file)
@@ -268,7 +269,7 @@ def read_labnirs(
                     ("subtype", pl.Categorical()),
                     # ("wavelength_str", pl.String),
                     ("wavelength", pl.UInt32),
-                ]
+                ],
             ),
             orient="row",
         )
@@ -295,7 +296,7 @@ def read_labnirs(
         initial_count = len(columns)
         columns = columns.filter(
             # parentheses are necessary otherwise Polars thinks that "meta" is a column name
-            (pl.col("category") == "meta") | (~pl.col("subtype").is_in(drop_subtype))
+            (pl.col("category") == "meta") | (~pl.col("subtype").is_in(drop_subtype)),
         )
         log.debug(
             "Dropped %d columns based on subtype filter %s. Remaining columns after filtering: %s",
@@ -318,7 +319,7 @@ def read_labnirs(
 
     if wavelengths.height == 0:
         log.debug(
-            "No wavelengths found in data columns, creating dummy wavelength entry"
+            "No wavelengths found in data columns, creating dummy wavelength entry",
         )
         wavelengths = pl.DataFrame({"wavelength": [0], "wavelength_index": [1]})
 
@@ -379,7 +380,7 @@ def read_labnirs(
                 zip(
                     column_names,
                     [pl.String] * len(column_names),
-                )
+                ),
             ),
         )
         # select only needed columns
@@ -390,7 +391,9 @@ def read_labnirs(
         .select(pl.col(pl.String).str.strip_chars())
         # convert mark to enum, task to uint, and the rest to float
         .cast({"mark": pl.Enum(["0Z", "0", "1"]), "task": pl.UInt32})
-        .cast({pl.String: pl.Float64})
+        .cast(
+            {pl.String: pl.Float64},
+        )
         # scan_csv is lazy, need to collect
         .collect()
     )
@@ -415,34 +418,9 @@ def read_labnirs(
     )
 
 
-def read_probe_pairs(data_file: Path) -> str:
-    """Reads the header line containing probe pairs.
-
-    Parameters
-    ----------
-    data_file : Path
-        Path to the LabNIRS data file.
-        File is expected to be in the format exported by the LabNIRS software,
-        with 35 lines of header and a version number/header type of 11.0.
-
-    Returns
-    -------
-    str
-        String containing probe pairs without leading and trailing whitespace.
-        For example: "(1,1)(2,1)..."
-    """
-    log.info("Reading probe pairs from file: %s", data_file)
-    if not data_file.exists():
-        raise LabNirsReadError(f"Data file not found: {data_file}")
-
-    header = _read_header(data_file)
-    pairs_str = header[32].strip()
-    log.debug("Found probe pairs string: %s", pairs_str)
-    return pairs_str
-
-
 def _extract_data(data: pl.DataFrame, columns: pl.DataFrame) -> model.Data:
-    """Compile data into a model.Data object.
+    """
+    Compile data into a model.Data object.
 
     Parameters
     ----------
@@ -463,7 +441,19 @@ def _extract_data(data: pl.DataFrame, columns: pl.DataFrame) -> model.Data:
     """
 
     def get_label(subtype: str) -> str | None:
-        """Map subtype to data type label."""
+        """
+        Map subtype to data type label.
+
+        Parameters
+        ----------
+        subtype : str
+            Data subtype identifier (e.g., "hbo", "hbr", "hbt").
+
+        Returns
+        -------
+        str or None
+            Corresponding label ("HbO", "HbR", "HbT") or None if no match.
+        """
         match subtype:
             case "hbo":
                 return "HbO"
@@ -490,7 +480,7 @@ def _extract_data(data: pl.DataFrame, columns: pl.DataFrame) -> model.Data:
     data_columns = columns.filter(pl.col("category") != "meta")["name"].to_list()
     if len(data_columns) == 0:
         raise LabNirsReadError(
-            "No data columns found after filtering; cannot extract data."
+            "No data columns found after filtering; cannot extract data.",
         )
     extracted_data = model.Data(
         time=data["time"].to_numpy(),
@@ -514,9 +504,12 @@ def _extract_data(data: pl.DataFrame, columns: pl.DataFrame) -> model.Data:
 
 
 def _extract_probes(
-    sources: pl.DataFrame, detectors: pl.DataFrame, wavelengths: pl.DataFrame
+    sources: pl.DataFrame,
+    detectors: pl.DataFrame,
+    wavelengths: pl.DataFrame,
 ) -> model.Probe:
-    """Compile probe information into a model.Probe object.
+    """
+    Compile probe information into a model.Probe object.
 
     Parameters
     ----------
@@ -548,7 +541,7 @@ def _extract_probes(
     log.info("Extracting probe information")
     if wavelengths.height == 0 or sources.height == 0 or detectors.height == 0:
         raise LabNirsReadError(
-            "Cannot extract probe information: wavelength, source, or detector list is empty."
+            "Cannot extract probe information: wavelength, source, or detector list is empty.",
         )
     probe = model.Probe(
         wavelengths=wavelengths["wavelength"].to_numpy().astype(np.float64),
@@ -569,7 +562,8 @@ def _extract_probes(
 
 
 def _extract_metadata(header: list[str]) -> model.Metadata:
-    """Compile metadata into a model.Metadata object.
+    """
+    Compile metadata into a model.Metadata object.
 
     Parameters
     ----------
@@ -599,13 +593,13 @@ def _extract_metadata(header: list[str]) -> model.Metadata:
     date = measurement_datetime["date"].split("/")
     if len(date) != 3:
         raise LabNirsReadError(
-            f"Invalid measurement date format in header: {measurement_datetime['date']}"
+            f"Invalid measurement date format in header: {measurement_datetime['date']}",
         )
     measurement_date = f"{date[0]}-{date[1]:>02}-{date[2]:>02}"
     time = measurement_datetime["time"].split(":")
     if len(time) != 3:
         raise LabNirsReadError(
-            f"Invalid measurement time format in header: {measurement_datetime['time']}"
+            f"Invalid measurement time format in header: {measurement_datetime['time']}",
         )
     measurement_time = f"{time[0]:>02}:{time[1]:>02}:{time[2]:>02}"
     additional_fields = dict()
@@ -640,7 +634,8 @@ def _extract_metadata(header: list[str]) -> model.Metadata:
 
 
 def _extract_stims(data: pl.DataFrame) -> list[model.Stim]:
-    """Extract stimulus information into a list of model.Stim objects.
+    """
+    Extract stimulus information into a list of model.Stim objects.
 
     Parameters
     ----------
@@ -675,7 +670,7 @@ def _extract_stims(data: pl.DataFrame) -> list[model.Stim]:
             pl.when(pl.col("mark") == "0Z")
             .then(pl.lit("Z"))
             .otherwise(pl.col("task").cast(pl.String))
-            .alias("task_name")
+            .alias("task_name"),
         )
         .select(["time", "task_name"])
         .collect()
@@ -699,7 +694,8 @@ def _extract_stims(data: pl.DataFrame) -> list[model.Stim]:
 
 
 def _match_line(pattern: str, lines: list[str]) -> dict[str, str]:
-    """Match a regexp pattern against each line until a match is found.
+    """
+    Match a regexp pattern against each line until a match is found.
 
     Parameters
     ----------
@@ -725,7 +721,8 @@ def _match_line(pattern: str, lines: list[str]) -> dict[str, str]:
 
 
 def _read_header(data_file: Path) -> list[str]:
-    """Read header lines from a LabNIRS file.
+    """
+    Read header lines from a LabNIRS file.
 
     Parameters
     ----------
@@ -744,7 +741,7 @@ def _read_header(data_file: Path) -> list[str]:
     """
     log.info("Reading header lines from file %s", data_file)
     try:
-        with open(data_file, "r", encoding="ASCII") as f:
+        with open(data_file, encoding="ASCII") as f:
             header = [f.readline() for _ in range(DATA_START_LINE - 1)]
         log.debug(
             "Read header lines: requested %d, read %d lines",
@@ -760,7 +757,8 @@ def _read_header(data_file: Path) -> list[str]:
 
 
 def _verify_header_format(header: list[str]) -> None:
-    """Verify that the header conforms to expected LabNIRS format.
+    """
+    Verify that the header conforms to expected LabNIRS format.
 
     Parameters
     ----------
@@ -785,13 +783,13 @@ def _verify_header_format(header: list[str]) -> None:
     log.debug("Checking for critical header format errors")
     if re.match(LINE_PATTERNS["top_line"], header[0]) is None:
         raise LabNirsReadError(
-            f"Critical header format error: invalid top line in header: {header[0].strip()}"
+            f"Critical header format error: invalid top line in header: {header[0].strip()}",
         )
     # Channel pairs are on line 33
     if re.match(LINE_PATTERNS["channel_pairs"], header[32]) is None:
         raise LabNirsReadError(
             f"Critical header format error: channel pairs not found in line 33: {header[32].strip()}. "
-            "Expected format: (source,detector)(source,detector)..."
+            "Expected format: (source,detector)(source,detector)...",
         )
 
     # Non-critical warnings (may produce errors later)
@@ -810,7 +808,8 @@ def _verify_header_format(header: list[str]) -> None:
         log.warning("Missing ID metadata in line 3: %s", header[2].strip())
     if re.match(LINE_PATTERNS["measurement_datetime"], header[1]) is None:
         log.warning(
-            "Missing measurement datetime metadata in line 2: %s", header[1].strip()
+            "Missing measurement datetime metadata in line 2: %s",
+            header[1].strip(),
         )
     if re.match(LINE_PATTERNS["name"], header[3]) is None:
         log.warning("Missing subject name metadata in line 4: %s", header[3].strip())

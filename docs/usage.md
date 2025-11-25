@@ -25,7 +25,8 @@ Support for other probe layout formats may be implemented in the future.
 
 ### Selecting raw voltage data only
 
-Suppose that you have a LABNIRS file with both raw voltage and Hb data, and want to export only the former:
+Suppose that you have a LABNIRS file with both raw voltage and Hb data,
+and want to export only the former:
 
 ```bash
 python -m labnirs2snirf input.txt --type raw
@@ -35,13 +36,16 @@ The `--type` option specifies which data type (raw, Hb, all) to keep in the outp
 
 ### Keeping HbO and HbR only
 
-Suppose that you have a LABNIRS file with both raw voltage and Hb data, and want to export only HbO and HbR data:
+Suppose that you have a LABNIRS file with both raw voltage and Hb data,
+and want to exportonly HbO and HbR data:
 
 ```bash
 python -m labnirs2snirf input.txt --type hb --drop hbt
 ```
 
-The `--type hb` option keeps only haemoglobin data, while `--drop hbt` excludes total Hb. If the LABNIRS file only contains Hb data, `--type` is unnecessary.
+The `--type hb` option keeps only haemoglobin data, while `--drop hbt`
+excludes total Hb. If the LABNIRS file only contains Hb data, `--type`
+is unnecessary.
 
 ## Command-Line Options
 
@@ -58,9 +62,12 @@ Available options:
 - `output`: Path to the output SNIRF file (optional, default: "out.snirf")
 - `--locations`: Path to probe layout/montage file (optional)
 - `--type`: Select type of data to include (possible values: hb, raw, all)
-- `--drop`: Exclude specific data type (HbO, HbR, HbT or wavelength); can be used multiple times
-- `--verbose`,`-v`: Enable verbose logging output; can be repeated up to 3 times (e.g. -vvv)
-- `--log`: Redirects log output to "labnirs2snirf.log"; implies at least one level of verbosity
+- `--drop`: Exclude specific data type (HbO, HbR, HbT or wavelength); can
+be used multiple times
+- `--verbose`,`-v`: Enable verbose logging output; can be repeated up to 3
+times (e.g. -vvv)
+- `--log`: Redirects log output to "labnirs2snirf.log"; implies at least one
+level of verbosity
 
 ## Python API
 
@@ -93,24 +100,29 @@ write_snirf(data, Path("output.snirf"))
 
 ### Input File Format
 
-Text file exported by the LabNIRS software. LABNIRS allows to select whether to include _voltage_ and/or _raw_
-data, and obviously, if one data type is not included, the relevant `--drop` and `--type` switches may not
-work as intended. It is possible to run into an error for not having any data when dropping incorrect data types.
+Text file exported by the LabNIRS software. LABNIRS allows to select
+whether to include _voltage_ and/or _raw_ data, and obviously, if one
+data type is not included, the relevant `--drop` and `--type` switches
+may not work as intended. It is possible to run into an error for not
+having any data when dropping incorrect data types.
 
 ### Output Format
 
-The output is a valid SNIRF (HDF5) file. Validity can be verified with the [snirf](https://github.com/BUNPC/pysnirf2) library.
+The output is a valid SNIRF (HDF5) file. Validity can be verified with the
+[snirf](https://github.com/BUNPC/pysnirf2) library.
 
 ### Probe Layout Files
 
-Probe layout files specify the 3D positions of sources and detectors. The expected format is
-a .sfp file, which is a tab-separated text file with columns:
+Probe layout files specify the 3D positions of sources and detectors. The
+expected format is a .sfp file, which is a tab-separated text file with
+columns:
 
 - Source/Detector Label (e.g. S1)
 - X, Y, Z coordinates
 
 Example layout.sfp:
-```
+
+```csv
 S1\t10.0\t0.0\t5.0
 D1\t15.0\t0.0\t1.0
 ```
@@ -125,20 +137,21 @@ LABNIRS does not export all data relevant to the experiment:
 - Task duration, pre and post rest times (listed in a `.csv` file)
 - Probe layout
 
-Currently, **labnirs2snirf** is only able to read the exported data, not these additional files.
-This means, that only the task onset is written correctly to SNIRF, duration is set to 0,
-and other timings are not stored.
+Currently, **labnirs2snirf** is only able to read the exported data,not these
+additional files. This means, that only the task onset is written correctly to
+SNIRF, duration is set to 0, and other timings are not stored.
 
 ### Input File Version / Format
 
-So far I have only seen export files with header version 11 and 35 lines of header data.
-If other formats exist, **labnirs2snirf** may not work with them.
+So far I have only seen export files with header version 11 and 35 lines of
+header data. If other formats exist, **labnirs2snirf** may not work with them.
 
 ### Tasks
 
-I am mostly familiar with using the EVENT marker for indicating TASK changes, and
-have not really looked into how other operating modes work. There may be problems with
-how task-related data is interpreted by **labnirs2snirf** in such cases.
+I am mostly familiar with using the EVENT marker for indicating TASK changes,
+and have not really looked into how other operating modes work. There may be
+problems with how task-related data is interpreted by **labnirs2snirf** in such
+cases.
 
 If you think you have encountered a problem possibly due to these limitations,
 you're welcome to open a GitHub issue and describe in detail what happened.

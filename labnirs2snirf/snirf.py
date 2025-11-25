@@ -20,7 +20,8 @@ log = logging.getLogger(__name__)
 
 
 def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
-    """Write the NIRS data to a SNIRF file.
+    """
+    Write the NIRS data to a SNIRF file.
 
     Parameters
     ----------
@@ -70,7 +71,8 @@ def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
 
 
 def str_encode(s: str) -> bytes:
-    """Encode a string to bytes using UTF-8 encoding.
+    """
+    Encode a string to bytes using UTF-8 encoding.
 
     Parameters
     ----------
@@ -86,7 +88,8 @@ def str_encode(s: str) -> bytes:
 
 
 def _write_metadata_group(metadata: model.Metadata, group: h5py.Group) -> None:
-    """Write metadata to a HDF5 group following SNIRF specification.
+    """
+    Write metadata to a HDF5 group following SNIRF specification.
 
     Parameters
     ----------
@@ -116,7 +119,8 @@ def _write_metadata_group(metadata: model.Metadata, group: h5py.Group) -> None:
 
 
 def _write_data_group(data: model.Data, group: h5py.Group) -> None:
-    """Write experimental data to a HDF5 group following SNIRF specification.
+    """
+    Write experimental data to a HDF5 group following SNIRF specification.
 
     Parameters
     ----------
@@ -152,7 +156,8 @@ def _write_data_group(data: model.Data, group: h5py.Group) -> None:
 
 
 def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
-    """Write stimulus information to HDF5 groups following SNIRF specification.
+    """
+    Write stimulus information to HDF5 groups following SNIRF specification.
 
     Parameters
     ----------
@@ -195,7 +200,8 @@ def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
 
 
 def _write_probe_group(probe: model.Probe, group: h5py.Group) -> None:
-    """Write probe information to a HDF5 group following SNIRF specification.
+    """
+    Write probe information to a HDF5 group following SNIRF specification.
 
     Parameters
     ----------
@@ -228,7 +234,8 @@ def _write_probe_group(probe: model.Probe, group: h5py.Group) -> None:
         group.create_dataset(
             "sourceLabels",
             data=np.array(
-                probe.sourceLabels, dtype=h5py.string_dtype(encoding="utf-8")
+                probe.sourceLabels,
+                dtype=h5py.string_dtype(encoding="utf-8"),
             ),
         )
     else:
@@ -238,7 +245,8 @@ def _write_probe_group(probe: model.Probe, group: h5py.Group) -> None:
         group.create_dataset(
             "detectorLabels",
             data=np.array(
-                probe.detectorLabels, dtype=h5py.string_dtype(encoding="utf-8")
+                probe.detectorLabels,
+                dtype=h5py.string_dtype(encoding="utf-8"),
             ),
         )
     else:

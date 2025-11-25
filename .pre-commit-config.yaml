@@ -1,14 +1,17 @@
+---
 default_language_version:
   python: python3.14
 
 repos:
-  - repo: https://github.com/pre-commit/pre-commit
-    rev: v4.4.0
+  # Meta hooks to check the pre-commit config itself
+  - repo: meta
     hooks:
-      - id: validate_manifest
+      - id: check-hooks-apply
+      - id: check-useless-excludes
 
+  # General purpose hooks
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -18,107 +21,103 @@ repos:
       - id: check-yaml
       - id: check-ast
       - id: debug-statements
-      # Conflicts with black/ruff formatting
-      # - id: double-quote-string-fixer
+      - id: no-commit-to-branch
       - id: check-docstring-first
       - id: check-illegal-windows-names
-      # Git is already set up to convert to simple LF endings
       - id: mixed-line-ending
-        args: [--fix=no]
+        args: [--fix=lf]
       - id: name-tests-test
         args: [--pytest-test-first]
 
-  - repo: https://github.com/abravalheri/validate-pyproject
-    rev: v0.24.1
-    hooks:
-      - id: validate-pyproject
-
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.4
-    hooks:
-      # Linter
-      - id: ruff-check
-        # args: [ --fix ]
-      # Formatter
-      - id: ruff-format
-
-  # Ruff already includes isort functionality
-  # - repo: https://github.com/asottile/reorder-python-imports
-  #   rev: v3.16.0
-  #   hooks:
-  #     - id: reorder-python-imports
-  #       args: [--py312-plus]
-
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.18.2
-    hooks:
-      - id: mypy
-        additional_dependencies:
-        - polars==1.35.2
-
+  # Add trailing commas to last element inside arrays, etc.
   - repo: https://github.com/asottile/add-trailing-comma
-    rev: v4.0.0
+    rev: 832dc73b1c9cea082ffcfeae01ae89dfc1ac5043  # frozen: v4.0.0
     hooks:
       - id: add-trailing-comma
 
+  # Validate pyproject.toml
+  - repo: https://github.com/abravalheri/validate-pyproject
+    rev: 78f5e0f104cfa803d0597eaa924b4de3becd3e3e  # frozen: v0.24.1
+    hooks:
+      - id: validate-pyproject
+
+  # Python linting/formatting with Ruff
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: fa1ed65ba95bfa7771a71003a9d74402541f5a5c  # frozen: v0.14.6
+    hooks:
+      # Linter (just check)
+      - id: ruff-check
+      # Formatter (fix)
+      - id: ruff-format
+
+  # Upgrade syntax to newer Python versions
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.1
+    rev: 75992aaa40730136014f34227e0135f63fc951b4  # frozen: v3.21.2
     hooks:
       - id: pyupgrade
-        args: [--py312-plus]
+        args: [--py314-plus]
 
+  # Check markdown files
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.45.0
+    rev: c8fd5003603dd6f12447314ecd935ba87c09aff5  # frozen: v0.46.0
     hooks:
       - id: markdownlint
 
+  # Run Black on Python code blocks in documentation files.
   - repo: https://github.com/adamchainz/blacken-docs
-    rev: "1.20.0"
+    rev: dda8db18cfc68df532abf33b185ecd12d5b7b326  # frozen: 1.20.0
     hooks:
       - id: blacken-docs
         additional_dependencies:
-        - black==25.11.0
+          - black==25.11.0
 
+  # Check for common misspellings 1.
   - repo: https://github.com/crate-ci/typos
-    rev: v1.39.0
+    rev: b67d1be06b53c7a9ecb6254ee4643e179800df72  # frozen: typos-dict-v0.13.11
     hooks:
       - id: typos
 
-  # zizmor detects security vulnerabilities in GitHub Actions workflows.
-  # Additional configuration for the tool is found in `.github/zizmor.yml`
+  # Check for common misspellings 2.
+  - repo: https://github.com/codespell-project/codespell
+    rev: 63c8f8312b7559622c0d82815639671ae42132ac  # frozen: v2.4.1
+    hooks:
+      - id: codespell
+
+  # Detect security vulnerabilities in GitHub Actions workflows
+  # (not used: configuration file: .github/zizmor.yml)
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: v1.16.3
+    rev: 86ee5ea442ee969842e00913c6b76c060a7aa8ef  # frozen: v1.16.3
     hooks:
       - id: zizmor
 
-  # Disabled for now, as it cannot work with YAML anchors and shellcheck had errors.
-  # `actionlint` hook, for verifying correct syntax in GitHub Actions workflows.
-  # Some additional configuration for `actionlint` can be found in `.github/actionlint.yaml`.
-  # - repo: https://github.com/rhysd/actionlint
-  #   rev: v1.7.7
-  #   hooks:
-  #     - id: actionlint
-  #       # stages:
-  #         # This hook is disabled by default, since it's quite slow.
-  #         # To run all hooks *including* this hook, use `uvx pre-commit run -a --hook-stage=manual`.
-  #         # To run *just* this hook, use `uvx pre-commit run -a actionlint --hook-stage=manual`.
-  #       #   - manual
-  #       # args:
-  #       #   - "-ignore=SC2129" # ignorable stylistic lint from shellcheck
-  #       #   - "-ignore=SC2016" # another shellcheck lint: seems to have false positives?
-  #       additional_dependencies:
-  #         # actionlint has a shellcheck integration which extracts shell scripts in `run:` steps from GitHub Actions
-  #         # and checks these with shellcheck. This is arguably its most useful feature,
-  #         # but the integration only works if shellcheck is installed
-  #         - "github.com/wasilibs/go-shellcheck/cmd/shellcheck@v0.10.0"
-
-  - repo: local
+  # YAML linting
+  # configuration file: .yamllint
+  - repo: https://github.com/adrienverge/yamllint.git
+    rev: 79a6b2b1392eaf49cdd32ac4f14be1a809bbd8f7  # frozen: v1.37.1
     hooks:
-    - id: nox-tests
-      name: Run tests with nox
-      entry: nox
-      args: ["-t", "pre-commit"]
-      language: system
-      pass_filenames: false
-      types: [python]
-      verbose: true
+      - id: yamllint
+        args: [-c=.yamllint]
+
+  # YAML formatting
+  # configuration file: .yamlfmt
+  - repo: https://github.com/google/yamlfmt
+    rev: 884e367e8fae92b238653fd950a54d235d418e4e  # frozen: v0.20.0
+    hooks:
+      - id: yamlfmt
+
+  - repo: https://github.com/numpy/numpydoc
+    rev: 23b549bff8108f84045fcb48b5c94b92d4324a72  # frozen: v1.9.0
+    hooks:
+      - id: numpydoc-validation
+        exclude: |
+          (?x)^(
+            noxfile.py|
+            tests/.*
+          )$
+
+  # Find dead Python code
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: dada4a02e862cfe72d6c8eac2e9b7aae080b1df2  # frozen: v2.14
+    hooks:
+      - id: vulture
+        args: ["labnirs2snirf/"]

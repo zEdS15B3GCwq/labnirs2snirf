@@ -5,8 +5,6 @@ Based on the SNIRF specification v1.1.
 See https://github.com/fNIRS/snirf/blob/v1.1/snirf_specification.md for details.
 """
 
-from __future__ import annotations
-
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -16,7 +14,8 @@ if TYPE_CHECKING:
 
 @dataclass(slots=True, frozen=True)
 class Metadata:
-    """Metadata container for NIRS measurements following SNIRF specification.
+    """
+    Metadata container for NIRS measurements following SNIRF specification.
 
     Attributes
     ----------
@@ -47,7 +46,8 @@ class Metadata:
 
 @dataclass(slots=True, frozen=True)
 class Measurement:
-    """Measurement channel specification following SNIRF specification.
+    """
+    Measurement channel specification following SNIRF specification.
 
     Each Measurement describes a single data channel with information about
     the source-detector pair, wavelength, and data type.
@@ -78,7 +78,8 @@ class Measurement:
 
 @dataclass(slots=True, frozen=True)
 class Data:
-    """Experimental time series data following SNIRF specification.
+    """
+    Experimental time series data following SNIRF specification.
 
     Attributes
     ----------
@@ -99,7 +100,8 @@ class Data:
 
 @dataclass(slots=True, frozen=True)
 class Probe:
-    """Probe geometry and configuration following SNIRF specification.
+    """
+    Probe geometry and configuration following SNIRF specification.
 
     Attributes
     ----------
@@ -124,7 +126,8 @@ class Probe:
 
 @dataclass(slots=True, frozen=True)
 class Stim:
-    """Stimulus/event information following SNIRF specification.
+    """
+    Stimulus/event information following SNIRF specification.
 
     Attributes
     ----------
@@ -143,7 +146,8 @@ class Stim:
 
 @dataclass(slots=True, frozen=True)
 class Nirs:
-    """Complete NIRS dataset following SNIRF specification.
+    """
+    Complete NIRS dataset following SNIRF specification.
 
     This is the top-level container for a complete NIRS measurement,
     including metadata, experimental data, probe geometry, and stimuli.

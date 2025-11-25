@@ -1,35 +1,35 @@
  [File Information]      		 [Data Line]	36
 Measured Date	2000/01/02 11:12:13
-ID	ID1	Version	11.0
-Name	subject1	[HeaderType]	11.0/11.0
-Comment	comment1
-[Measurement Info.]
-Holder Location	       0
-Block Design	Off     
-Pre.Rest Time	       0
-Task Time	       0
-Pos.Rest Time	       0
-Loop	       0
-Averaging	       1
-Total Points	   8
-[.INF File]
-Filename	experiment1.inf
-[Condition-1]
-HV Switching	OFF
- R1 ,R2 ,R3 ,R4 ,R5 ,R6 ,R7 ,R8 
- 713.00,644.00,659.00,657.00,598.00,645.00,716.00,567.00
- Gain(X1,X4,X16,X64)
- R1 ,R2 ,R3 ,R4 ,R5 ,R6 ,R7 ,R8 
- 1,1,1,1,1,1,1,1
-[Analysis Condition]
-Smoothed Type	None            
-Smoothed Points	       0
-Smoothed Loop	       0
-Baseline Method	None            
-Baseline location	
-[Text Info.]
-Output Mode	Continious      	Task No.		Data Type	Hb&abs  
-Time Range	    0.00	  0.147	Averaing	1
+ID		Version	11.0
+Name		[HeaderType]	11.0/11.0
+Comment
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 (2,1)(2,2)
          	     	     	     	    ch- 1	    ch- 1	    ch- 1	    ch- 1	    ch- 1	    ch- 1	    ch- 2	    ch- 2	    ch- 2	    ch- 2	    ch- 2	    ch- 2
 Time(sec)	Task	Mark	Count	    oxyHb	  deoxyHb	  totalHb	 Abs780nm	 Abs805nm	 Abs830nm	    oxyHb	  deoxyHb	  totalHb	 Abs780nm	 Abs805nm	 Abs830nm

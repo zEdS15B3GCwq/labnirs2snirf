@@ -177,7 +177,9 @@ class TestExceptionHandling:
     def test_main_catches_all_exceptions_succeeds(self, capsys, outfile_path):
         """main() should catch all exceptions and return 1."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path)]
+            sys,
+            "argv",
+            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(outfile_path)],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = RuntimeError("Simulated error")
@@ -209,7 +211,10 @@ class TestExceptionHandling:
         assert "Simulated error" in output or "Exception received" in output
 
     def test_main_exception_logged_to_file_succeeds(
-        self, outfile_path, logfile_path, capsys
+        self,
+        outfile_path,
+        logfile_path,
+        capsys,
     ):
         """Exceptions in main() should be logged to file when --log used."""
         with patch.object(
@@ -376,7 +381,9 @@ class TestEndToEndLogging:
         target = tmp_path / "out.snirf"
 
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(target), "-vv"]
+            sys,
+            "argv",
+            ["prog", str(MINIMAL_LABNIRS_FILE_PATH), str(target), "-vv"],
         ):
             result = main()
 

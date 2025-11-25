@@ -14,7 +14,7 @@ authors = [
 ]
 keywords = ["Shimadzu", "Labnirs", "SNIRF", "convert"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -28,9 +28,42 @@ dependencies = [
     "numpy>=2.3.5",
 ]
 
+[dependency-groups]
+# Only install this dev dependency group if these tools are not available elsewhere.
+# For example, if using uv anyway, running tests and pre-commit hooks is much
+# simpler with `uvx nox` and `uvx prek`, or getting the tools with `uv tool install`.
+# In general, nox and prek will automatically install the other dev packages in
+# isolated environments. However, it can be useful to have some packages available,
+# e.g. pytest for VSCode to be able to discover and run tests.
+dev = [
+    "nox>=2025.11.12",
+    "prek>=0.2.18",
+    "pytest>=9.0.1",
+    "pytest-cov>=7.0.0",
+    "snirf>=0.8.0",
+    "uv>=0.9.12",
+]
+
 [project.urls]
 Homepage = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
 Repository = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
 
 [tool.ruff]
 target-version = "py314"
+
+[tool.numpydoc_validation]
+checks = [
+    "all",   # report on all checks, except the below
+    "EX01",
+    "SA01",
+    "ES01",
+]
+# exclude_files not working yet in numpydoc_validation
+exclude_files = [ # don't process filepaths that match these regex
+    "^tests/.*",
+    "^./noxfile.py",
+]
+
+[tool.uv]
+# only install dev dependencies if explicitly requested
+default-groups = []

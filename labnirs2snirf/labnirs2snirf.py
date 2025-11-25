@@ -15,7 +15,8 @@ from .snirf import write_snirf
 
 
 def main() -> int:
-    """LABNIRS to SNIRF conversion script.
+    """
+    LABNIRS to SNIRF conversion script.
 
     This function coordinates the full conversion workflow when
     run as `python -m labnirs2snirf` on the command line:
@@ -84,12 +85,12 @@ def main() -> int:
             log.exception("%s", e)
         print(
             f"Conversion failed: {e}\n"
-            "Increase verbosity (-v, -vv, -vvv) for more details. Use --log to log messages to a file."
+            "Increase verbosity (-v, -vv, -vvv) for more details. Use --log to log messages to a file.",
         )
         return 1
     except Exception as e:  # pylint: disable=W0718
         print(
-            "Something went wrong. Increase verbosity (-v, -vv, -vvv) for more details. Use --log to log messages to a file."
+            "Something went wrong. Increase verbosity (-v, -vv, -vvv) for more details. Use --log to log messages to a file.",
         )
         if log is not None:
             log.exception("Exception received. Error message: %s", e)

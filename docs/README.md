@@ -40,7 +40,8 @@ After building, open `docs/_build/html/index.html` in your web browser.
 
 ## Documentation Format
 
-Markdown (`.md`) files with MyST parser for all documentation. Python docstrings use NumPy format.
+Markdown (`.md`) files with MyST parser for all documentation.
+Python docstrings use NumPy format.
 
 ## Requirements
 

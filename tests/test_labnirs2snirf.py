@@ -8,22 +8,13 @@ import logging
 import runpy
 import subprocess
 import sys
-from pathlib import Path
 from unittest.mock import patch
-from typing import TYPE_CHECKING
 
 import h5py
 import numpy as np
 import pytest
 
 from labnirs2snirf.labnirs2snirf import main
-
-if TYPE_CHECKING:
-    from conftest import TEST_DATA_DIR
-
-
-MINIMAL_LABNIRS_FILE = TEST_DATA_DIR / "minimal_labnirs.txt"
-SMALL_LABNIRS_FILE = TEST_DATA_DIR / "small_labnirs.txt"
 
 
 @pytest.fixture(name="output_snirf")
@@ -53,10 +44,17 @@ def fixture_cleanup_logging():
 class TestMainSuccessfulConversion:
     """Tests for successful conversion scenarios."""
 
-    def test_main_minimal_file_default_args_succeeds(self, output_snirf, capsys):
+    def test_main_minimal_file_default_args_succeeds(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test successful conversion with minimal file and default arguments."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf)],
         ):
             result = main()
 
@@ -75,7 +73,8 @@ class TestMainSuccessfulConversion:
                 np.array([0.0, 0.021, 0.042, 0.063, 0.084, 0.105, 0.126, 0.147]),
             )
             np.testing.assert_array_equal(
-                f["/nirs/probe/wavelengths"], [780.0, 805.0, 830.0]
+                f["/nirs/probe/wavelengths"],
+                [780.0, 805.0, 830.0],
             )
             assert (
                 f["/nirs/metaDataTags/MeasurementDate"][()].decode("utf-8")
@@ -92,10 +91,12 @@ class TestMainSuccessfulConversion:
         captured = capsys.readouterr()
         assert captured.out == ""
 
-    def test_main_small_file_succeeds(self, output_snirf):
+    def test_main_small_file_succeeds(self, output_snirf, small_data_path):
         """Test successful conversion with small file containing metadata."""
         with patch.object(
-            sys, "argv", ["prog", str(SMALL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(small_data_path), str(output_snirf)],
         ):
             result = main()
 
@@ -113,7 +114,8 @@ class TestMainSuccessfulConversion:
             assert f["/nirs/metaDataTags/SubjectName"][()].decode("utf-8") == "subject1"
             assert f["/nirs/metaDataTags/comment"][()].decode("utf-8") == "comment1"
             np.testing.assert_array_equal(
-                f["/nirs/probe/wavelengths"], [780.0, 805.0, 830.0]
+                f["/nirs/probe/wavelengths"],
+                [780.0, 805.0, 830.0],
             )
             assert (
                 f["/nirs/metaDataTags/MeasurementDate"][()].decode("utf-8")
@@ -128,25 +130,35 @@ class TestMainSuccessfulConversion:
             assert f["/nirs/probe/detectorPos3D"][()].shape == (2, 3)
             assert f["/nirs/probe/sourceLabels"][0].decode("utf-8") == "S2"
 
-    def test_main_default_output_filename_succeeds(self, tmp_path, monkeypatch):
+    def test_main_default_output_filename_succeeds(
+        self,
+        tmp_path,
+        monkeypatch,
+        minimal_data_path,
+    ):
         """Test conversion with default output filename."""
         monkeypatch.chdir(tmp_path)
 
-        with patch.object(sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE)]):
+        with patch.object(sys, "argv", ["prog", str(minimal_data_path)]):
             result = main()
 
         assert result == 0
         default_output = tmp_path / "out.snirf"
         assert default_output.exists()
 
-    def test_main_with_locations_file_succeeds(self, output_snirf, layout_file):
+    def test_main_with_locations_file_succeeds(
+        self,
+        output_snirf,
+        layout_file,
+        minimal_data_path,
+    ):
         """Test successful conversion with probe locations file."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(MINIMAL_LABNIRS_FILE),
+                str(minimal_data_path),
                 str(output_snirf),
                 "--locations",
                 str(layout_file),
@@ -161,18 +173,20 @@ class TestMainSuccessfulConversion:
         # minimal data has S2 source and D1,D2 detectors; layout_file has S2 and D1 - we can check S2 and D1
         with h5py.File(output_snirf, "r") as f:
             np.testing.assert_array_equal(
-                f["/nirs/probe/detectorPos3D"][0, :], [15.0, 25.0, 35.0]
+                f["/nirs/probe/detectorPos3D"][0, :],
+                [15.0, 25.0, 35.0],
             )
             np.testing.assert_array_equal(
-                f["/nirs/probe/sourcePos3D"][0, :], [10.0, 20.0, 30.0]
+                f["/nirs/probe/sourcePos3D"][0, :],
+                [10.0, 20.0, 30.0],
             )
 
-    def test_main_type_raw_only_succeeds(self, output_snirf):
+    def test_main_type_raw_only_succeeds(self, output_snirf, small_data_path):
         """Test conversion keeping only raw data."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(SMALL_LABNIRS_FILE), str(output_snirf), "--type", "raw"],
+            ["prog", str(small_data_path), str(output_snirf), "--type", "raw"],
         ):
             result = main()
 
@@ -182,19 +196,23 @@ class TestMainSuccessfulConversion:
         with h5py.File(output_snirf, "r") as f:
             data_group = f["/nirs/data1"]
             ml_count = len(
-                [k for k in data_group.keys() if k.startswith("measurementList")]
+                [k for k in data_group.keys() if k.startswith("measurementList")],
             )
 
             for i in range(1, ml_count + 1):
                 ml = data_group[f"measurementList{i}"]
                 assert ml["dataType"][()] == 1
 
-    def test_main_type_hb_only_succeeds(self, output_snirf):
+    def test_main_type_hb_only_succeeds(
+        self,
+        output_snirf,
+        small_data_path,
+    ):
         """Test conversion keeping only hemoglobin data."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(SMALL_LABNIRS_FILE), str(output_snirf), "--type", "hb"],
+            ["prog", str(small_data_path), str(output_snirf), "--type", "hb"],
         ):
             result = main()
 
@@ -204,7 +222,7 @@ class TestMainSuccessfulConversion:
         with h5py.File(output_snirf, "r") as f:
             data_group = f["/nirs/data1"]
             ml_count = len(
-                [k for k in data_group.keys() if k.startswith("measurementList")]
+                [k for k in data_group.keys() if k.startswith("measurementList")],
             )
 
             for i in range(1, ml_count + 1):
@@ -212,12 +230,12 @@ class TestMainSuccessfulConversion:
                 assert ml["dataType"][()] == 99999
                 assert "dataTypeLabel" in ml
 
-    def test_main_type_all_succeeds(self, output_snirf):
+    def test_main_type_all_succeeds(self, output_snirf, small_data_path):
         """Test conversion keeping all data types."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(SMALL_LABNIRS_FILE), str(output_snirf), "--type", "all"],
+            ["prog", str(small_data_path), str(output_snirf), "--type", "all"],
         ):
             result = main()
 
@@ -227,7 +245,7 @@ class TestMainSuccessfulConversion:
         with h5py.File(output_snirf, "r") as f:
             data_group = f["/nirs/data1"]
             ml_count = len(
-                [k for k in data_group.keys() if k.startswith("measurementList")]
+                [k for k in data_group.keys() if k.startswith("measurementList")],
             )
 
             datatypes = set()
@@ -238,14 +256,14 @@ class TestMainSuccessfulConversion:
             assert 1 in datatypes  # raw
             assert 99999 in datatypes  # Hb
 
-    def test_main_drop_single_wavelength_succeeds(self, output_snirf):
+    def test_main_drop_single_wavelength_succeeds(self, output_snirf, small_data_path):
         """Test conversion dropping a specific wavelength."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--type",
                 "raw",
@@ -262,14 +280,14 @@ class TestMainSuccessfulConversion:
             wavelengths = f["/nirs/probe/wavelengths"][:]
             assert 830.0 not in wavelengths
 
-    def test_main_drop_single_hb_type_succeeds(self, output_snirf):
+    def test_main_drop_single_hb_type_succeeds(self, output_snirf, small_data_path):
         """Test conversion dropping a specific hemoglobin type."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--type",
                 "hb",
@@ -285,7 +303,7 @@ class TestMainSuccessfulConversion:
         with h5py.File(output_snirf, "r") as f:
             data_group = f["/nirs/data1"]
             ml_count = len(
-                [k for k in data_group.keys() if k.startswith("measurementList")]
+                [k for k in data_group.keys() if k.startswith("measurementList")],
             )
 
             for i in range(1, ml_count + 1):
@@ -293,14 +311,14 @@ class TestMainSuccessfulConversion:
                 if "dataTypeLabel" in ml:
                     assert ml["dataTypeLabel"][()].decode("utf-8") != "HbT"
 
-    def test_main_drop_multiple_types_succeeds(self, output_snirf):
+    def test_main_drop_multiple_types_succeeds(self, output_snirf, small_data_path):
         """Test conversion dropping multiple data types."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--drop",
                 "hbo",
@@ -320,7 +338,7 @@ class TestMainSuccessfulConversion:
             # Check HbO
             data_group = f["/nirs/data1"]
             ml_count = len(
-                [k for k in data_group.keys() if k.startswith("measurementList")]
+                [k for k in data_group.keys() if k.startswith("measurementList")],
             )
 
             for i in range(1, ml_count + 1):
@@ -328,14 +346,14 @@ class TestMainSuccessfulConversion:
                 if "dataTypeLabel" in ml:
                     assert ml["dataTypeLabel"][()].decode("utf-8") != "HbO"
 
-    def test_main_case_insensitive_args_succeeds(self, output_snirf):
+    def test_main_case_insensitive_args_succeeds(self, output_snirf, small_data_path):
         """Test that type and drop arguments are case-insensitive."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--type",
                 "HB",
@@ -348,14 +366,19 @@ class TestMainSuccessfulConversion:
         assert result == 0
         assert output_snirf.exists()
 
-    def test_main_all_options_combined_succeeds(self, output_snirf, layout_file):
+    def test_main_all_options_combined_succeeds(
+        self,
+        output_snirf,
+        layout_file,
+        small_data_path,
+    ):
         """Test conversion with all optional arguments specified."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--locations",
                 str(layout_file),
@@ -381,7 +404,7 @@ class TestMainSuccessfulConversion:
             # Check type filtering
             data_group = f["/nirs/data1"]
             ml_count = len(
-                [k for k in data_group.keys() if k.startswith("measurementList")]
+                [k for k in data_group.keys() if k.startswith("measurementList")],
             )
 
             for i in range(1, ml_count + 1):
@@ -391,7 +414,12 @@ class TestMainSuccessfulConversion:
                     assert ml["dataTypeLabel"][()].decode("utf-8") != "HbT"
 
     def test_main_logging_successful_conversion_at_debug_level_succeeds(
-        self, output_snirf, layout_file, caplog, capsys
+        self,
+        output_snirf,
+        layout_file,
+        caplog,
+        capsys,
+        small_data_path,
     ):
         """Test that all expected log messages are produced during successful conversion."""
         with caplog.at_level(logging.DEBUG):
@@ -400,7 +428,7 @@ class TestMainSuccessfulConversion:
                 "argv",
                 [
                     "prog",
-                    str(SMALL_LABNIRS_FILE),
+                    str(small_data_path),
                     str(output_snirf),
                     "--locations",
                     str(layout_file),
@@ -432,7 +460,11 @@ class TestMainSuccessfulConversion:
                 f"Expected log message not found: {message_text} at {logging.getLevelName(expected_level)} level"
             )
 
-    def test_running_module_in_subprocess_succeeds(self, output_snirf):
+    def test_running_module_in_subprocess_succeeds(
+        self,
+        output_snirf,
+        minimal_data_path,
+    ):
         """Test running the module as __main__ to cover sys.exit(main())."""
         # Import the module to trigger __main__ execution
 
@@ -441,7 +473,7 @@ class TestMainSuccessfulConversion:
                 sys.executable,
                 "-m",
                 "labnirs2snirf.labnirs2snirf",
-                str(MINIMAL_LABNIRS_FILE),
+                str(minimal_data_path),
                 str(output_snirf),
             ],
             capture_output=True,
@@ -452,7 +484,7 @@ class TestMainSuccessfulConversion:
         assert result.returncode == 0
         assert output_snirf.exists()
 
-    def test_running_module_with_runpy_succeeds(self, output_snirf):
+    def test_running_module_with_runpy_succeeds(self, output_snirf, minimal_data_path):
         """Test running the module as __main__ to cover sys.exit(main())."""
         # Execute the __main__ block by running the module code
         # Need to remove the module from sys.modules to avoid the warning
@@ -461,7 +493,9 @@ class TestMainSuccessfulConversion:
 
         try:
             with patch.object(
-                sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf)]
+                sys,
+                "argv",
+                ["prog", str(minimal_data_path), str(output_snirf)],
             ):
                 with pytest.raises(SystemExit) as exc_info:
                     runpy.run_module(module_name, run_name="__main__")
@@ -473,12 +507,18 @@ class TestMainSuccessfulConversion:
             if saved_module is not None:
                 sys.modules[module_name] = saved_module
 
-    def test_running_module_through_main_with_runpy_succeeds(self, output_snirf):
+    def test_running_module_through_main_with_runpy_succeeds(
+        self,
+        output_snirf,
+        minimal_data_path,
+    ):
         """Test running the module with module name, using __main__.py."""
         module_main_name = "labnirs2snirf"
 
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf)],
         ):
             with pytest.raises(SystemExit) as exc_info:
                 runpy.run_module(module_main_name, run_name="__main__")
@@ -486,12 +526,18 @@ class TestMainSuccessfulConversion:
         assert exc_info.value.code == 0
         assert output_snirf.exists()
 
-    def test_main_output_validates_with_pysnirf2_succeeds(self, output_snirf):
+    def test_main_output_validates_with_pysnirf2_succeeds(
+        self,
+        output_snirf,
+        small_data_path,
+    ):
         """Test that converted SNIRF file passes pysnirf2 validation."""
         from snirf import validateSnirf
 
         with patch.object(
-            sys, "argv", ["prog", str(SMALL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(small_data_path), str(output_snirf)],
         ):
             result = main()
 
@@ -506,10 +552,17 @@ class TestMainSuccessfulConversion:
 class TestMainVerbosityLevels:
     """Tests for different verbosity levels."""
 
-    def test_main_no_verbosity_no_console_output_succeeds(self, output_snirf, capsys):
+    def test_main_no_verbosity_no_console_output_succeeds(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that no verbosity produces no console output."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf)],
         ):
             result = main()
 
@@ -518,10 +571,17 @@ class TestMainVerbosityLevels:
         assert captured.out == ""
         assert captured.err == ""
 
-    def test_main_single_v_warning_level_succeeds(self, output_snirf, capsys):
+    def test_main_single_v_warning_level_succeeds(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that single -v shows WARNING level messages."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "-v"]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf), "-v"],
         ):
             result = main()
 
@@ -534,10 +594,17 @@ class TestMainVerbosityLevels:
         assert "INFO" not in output
         assert "Logger configured" not in output
 
-    def test_main_double_v_info_level_succeeds(self, output_snirf, capsys):
+    def test_main_double_v_info_level_succeeds(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that -vv shows INFO level messages."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "-vv"]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf), "-vv"],
         ):
             result = main()
 
@@ -552,10 +619,17 @@ class TestMainVerbosityLevels:
         # Should not show DEBUG
         assert "Parsed arguments:" not in output
 
-    def test_main_triple_v_debug_level_succeeds(self, output_snirf, capsys):
+    def test_main_triple_v_debug_level_succeeds(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that -vvv shows DEBUG level messages."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "-vvv"]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf), "-vvv"],
         ):
             result = main()
 
@@ -568,7 +642,11 @@ class TestMainVerbosityLevels:
         assert "Reading header lines from file" in output
 
     def test_main_log_flag_creates_log_file_succeeds(
-        self, output_snirf, tmp_path, monkeypatch
+        self,
+        output_snirf,
+        tmp_path,
+        monkeypatch,
+        minimal_data_path,
     ):
         """Test that --log flag creates a log file."""
         monkeypatch.chdir(tmp_path)
@@ -576,7 +654,7 @@ class TestMainVerbosityLevels:
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "--log", "-vv"],
+            ["prog", str(minimal_data_path), str(output_snirf), "--log", "-vv"],
         ):
             result = main()
 
@@ -589,7 +667,11 @@ class TestMainVerbosityLevels:
         assert "Successfully completed conversion" in content
 
     def test_main_log_with_verbosity_succeeds(
-        self, output_snirf, tmp_path, monkeypatch
+        self,
+        output_snirf,
+        tmp_path,
+        monkeypatch,
+        minimal_data_path,
     ):
         """Test that --log combined with -v works correctly."""
         monkeypatch.chdir(tmp_path)
@@ -597,7 +679,7 @@ class TestMainVerbosityLevels:
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "--log", "-vvv"],
+            ["prog", str(minimal_data_path), str(output_snirf), "--log", "-vvv"],
         ):
             result = main()
 
@@ -625,12 +707,19 @@ class TestMainArgumentErrors:
         assert "Argument error:" in captured.out
         assert "does not exist" in captured.out
 
-    def test_main_existing_target_file_fails(self, output_snirf, capsys):
+    def test_main_existing_target_file_fails(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that existing target file produces error."""
         output_snirf.write_text("existing content")
 
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf)],
         ):
             result = main()
 
@@ -640,7 +729,11 @@ class TestMainArgumentErrors:
         assert "already exists" in captured.out
 
     def test_main_nonexistent_locations_file_fails(
-        self, output_snirf, tmp_path, capsys
+        self,
+        output_snirf,
+        tmp_path,
+        capsys,
+        minimal_data_path,
     ):
         """Test that nonexistent locations file produces error."""
         nonexistent = tmp_path / "nonexistent.sfp"
@@ -650,7 +743,7 @@ class TestMainArgumentErrors:
             "argv",
             [
                 "prog",
-                str(MINIMAL_LABNIRS_FILE),
+                str(minimal_data_path),
                 str(output_snirf),
                 "--locations",
                 str(nonexistent),
@@ -662,12 +755,17 @@ class TestMainArgumentErrors:
         captured = capsys.readouterr()
         assert "Argument error:" in captured.out
 
-    def test_main_invalid_type_argument_fails(self, output_snirf, capsys):
+    def test_main_invalid_type_argument_fails(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that invalid --type argument fails."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "--type", "invalid"],
+            ["prog", str(minimal_data_path), str(output_snirf), "--type", "invalid"],
         ):
             with pytest.raises(SystemExit):
                 main()
@@ -675,14 +773,19 @@ class TestMainArgumentErrors:
         captured = capsys.readouterr()
         assert "invalid choice" in captured.err
 
-    def test_main_invalid_drop_argument_fails(self, output_snirf, capsys):
+    def test_main_invalid_drop_argument_fails(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that invalid --drop argument produces error."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(MINIMAL_LABNIRS_FILE),
+                str(minimal_data_path),
                 str(output_snirf),
                 "--drop",
                 "invalid_type",
@@ -729,7 +832,9 @@ class TestMainConversionErrors:
         corrupted.write_text("Invalid header\n" * 10)
 
         with patch.object(
-            sys, "argv", ["prog", str(corrupted), str(output_snirf), "-v"]
+            sys,
+            "argv",
+            ["prog", str(corrupted), str(output_snirf), "-v"],
         ):
             result = main()
 
@@ -738,7 +843,13 @@ class TestMainConversionErrors:
         assert "Conversion failed:" in captured.out
         assert "Critical header format error" in captured.out
 
-    def test_main_invalid_layout_file_fails(self, output_snirf, tmp_path, capsys):
+    def test_main_invalid_layout_file_fails(
+        self,
+        output_snirf,
+        tmp_path,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that invalid layout file produces conversion error."""
         bad_layout = tmp_path / "bad_layout.sfp"
         bad_layout.write_text("S1\tabc\tdef\tghi\n")  # Non-numeric coordinates
@@ -748,7 +859,7 @@ class TestMainConversionErrors:
             "argv",
             [
                 "prog",
-                str(MINIMAL_LABNIRS_FILE),
+                str(minimal_data_path),
                 str(output_snirf),
                 "--locations",
                 str(bad_layout),
@@ -773,10 +884,17 @@ class TestMainConversionErrors:
         captured = capsys.readouterr()
         assert "Conversion failed:" in captured.out
 
-    def test_main_simulated_exception_without_logger_fails(self, output_snirf, capsys):
+    def test_main_simulated_exception_without_logger_fails(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test exception handling when logger not configured."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf)]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf)],
         ):
             with patch("labnirs2snirf.args.Arguments.parse") as mock_parse:
                 mock_parse.side_effect = RuntimeError("Simulated error before logger")
@@ -790,10 +908,17 @@ class TestMainConversionErrors:
         assert "Something went wrong" in output
         assert "Logging not configured" in output
 
-    def test_main_simulated_exception_with_logger_fails(self, output_snirf, capsys):
+    def test_main_simulated_exception_with_logger_fails(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test exception handling when logger is configured."""
         with patch.object(
-            sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "-v"]
+            sys,
+            "argv",
+            ["prog", str(minimal_data_path), str(output_snirf), "-v"],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = RuntimeError("Simulated error after logger")
@@ -813,14 +938,20 @@ class TestMainEdgeCases:
     """Tests for edge cases and boundary conditions."""
 
     def test_main_output_without_snirf_extension_succeeds(
-        self, tmp_path, caplog, capsys
+        self,
+        tmp_path,
+        caplog,
+        capsys,
+        minimal_data_path,
     ):
         """Test that output without .snirf extension produces warning."""
         output = tmp_path / "output.hdf5"
 
         with caplog.at_level(logging.WARNING):
             with patch.object(
-                sys, "argv", ["prog", str(MINIMAL_LABNIRS_FILE), str(output), "-v"]
+                sys,
+                "argv",
+                ["prog", str(minimal_data_path), str(output), "-v"],
             ):
                 result = main()
 
@@ -832,30 +963,37 @@ class TestMainEdgeCases:
             for record in caplog.records
         )
 
-    def test_main_relative_paths_succeeds(self, tmp_path, monkeypatch):
+    def test_main_relative_paths_succeeds(
+        self,
+        output_snirf,
+        monkeypatch,
+        test_data_dir,
+    ):
         """Test conversion with relative paths."""
-        monkeypatch.chdir(TEST_DATA_DIR.parent)
+        monkeypatch.chdir(test_data_dir.parent)
 
         relative_input = "tests/minimal_labnirs.txt"
-        relative_output = "tests/output.snirf"
+        output = output_snirf
 
-        with patch.object(sys, "argv", ["prog", relative_input, relative_output]):
+        with patch.object(sys, "argv", ["prog", relative_input, output]):
             result = main()
 
         assert result == 0
-        assert (TEST_DATA_DIR.parent / "tests" / "output.snirf").exists()
+        assert output_snirf.exists()
 
-        # Cleanup
-        (TEST_DATA_DIR.parent / "tests" / "output.snirf").unlink()
-
-    def test_main_drop_all_data_types_raises_error(self, output_snirf, capsys):
+    def test_main_drop_all_data_types_raises_error(
+        self,
+        output_snirf,
+        capsys,
+        small_data_path,
+    ):
         """Test that dropping all available data types produces error."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--type",
                 "hb",
@@ -874,14 +1012,14 @@ class TestMainEdgeCases:
         captured = capsys.readouterr()
         assert "Conversion failed:" in captured.out
 
-    def test_main_duplicate_drop_values_succeeds(self, output_snirf):
+    def test_main_duplicate_drop_values_succeeds(self, output_snirf, small_data_path):
         """Test that duplicate drop values are handled correctly."""
         with patch.object(
             sys,
             "argv",
             [
                 "prog",
-                str(SMALL_LABNIRS_FILE),
+                str(small_data_path),
                 str(output_snirf),
                 "--drop",
                 "hbt",
@@ -896,12 +1034,17 @@ class TestMainEdgeCases:
         assert result == 0
         # Should deduplicate internally
 
-    def test_main_multiple_verbosity_flags_succeeds(self, output_snirf, capsys):
+    def test_main_multiple_verbosity_flags_succeeds(
+        self,
+        output_snirf,
+        capsys,
+        minimal_data_path,
+    ):
         """Test that multiple -v flags accumulate correctly."""
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "-v", "-v", "-v"],
+            ["prog", str(minimal_data_path), str(output_snirf), "-v", "-v", "-v"],
         ):
             result = main()
 
@@ -917,7 +1060,11 @@ class TestMainLoggingIntegration:
     """Tests for logging integration with file and console."""
 
     def test_main_log_file_contains_detailed_info_succeeds(
-        self, output_snirf, tmp_path, monkeypatch
+        self,
+        output_snirf,
+        tmp_path,
+        monkeypatch,
+        small_data_path,
     ):
         """Test that log file contains detailed information with timestamps."""
         monkeypatch.chdir(tmp_path)
@@ -925,7 +1072,7 @@ class TestMainLoggingIntegration:
         with patch.object(
             sys,
             "argv",
-            ["prog", str(SMALL_LABNIRS_FILE), str(output_snirf), "--log", "-vvv"],
+            ["prog", str(small_data_path), str(output_snirf), "--log", "-vvv"],
         ):
             result = main()
 
@@ -945,7 +1092,12 @@ class TestMainLoggingIntegration:
         assert "Successfully completed conversion" in content
 
     def test_main_console_vs_file_logging_format_succeeds(
-        self, output_snirf, tmp_path, monkeypatch, capsys
+        self,
+        output_snirf,
+        tmp_path,
+        monkeypatch,
+        capsys,
+        minimal_data_path,
     ):
         """Test that console and file logging have different formats."""
         monkeypatch.chdir(tmp_path)
@@ -953,7 +1105,7 @@ class TestMainLoggingIntegration:
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "--log", "-vv"],
+            ["prog", str(minimal_data_path), str(output_snirf), "--log", "-vv"],
         ):
             result = main()
 
@@ -973,7 +1125,7 @@ class TestMainLoggingIntegration:
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "-vv"],
+            ["prog", str(minimal_data_path), str(output_snirf), "-vv"],
         ):
             result = main()
 
@@ -990,7 +1142,12 @@ class TestMainLoggingIntegration:
         assert len(file_content) > len(console_output)
 
     def test_main_exception_logged_to_file_with_traceback_succeeds(
-        self, output_snirf, tmp_path, monkeypatch, capsys
+        self,
+        output_snirf,
+        tmp_path,
+        monkeypatch,
+        capsys,
+        minimal_data_path,
     ):
         """Test that exceptions are logged to file with full traceback."""
         monkeypatch.chdir(tmp_path)
@@ -998,7 +1155,7 @@ class TestMainLoggingIntegration:
         with patch.object(
             sys,
             "argv",
-            ["prog", str(MINIMAL_LABNIRS_FILE), str(output_snirf), "--log", "-v"],
+            ["prog", str(minimal_data_path), str(output_snirf), "--log", "-v"],
         ):
             with patch("labnirs2snirf.labnirs2snirf.read_labnirs") as mock_read:
                 mock_read.side_effect = RuntimeError("Test exception for logging")
