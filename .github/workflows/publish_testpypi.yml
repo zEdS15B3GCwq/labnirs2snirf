@@ -1,0 +1,106 @@
+name: Publish to TestPyPI (manual only for now)
+
+on:
+  # release:
+  #   types: [published]
+  workflow_dispatch:  # manual trigger
+
+jobs:
+  build-and-publish:
+    name: Build and Publish to PyPI (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.14"]
+    environment: testpypi
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      # - name: Set up UV
+      #   uses: astral-sh/setup-uv@v7
+
+      - name: Install Python
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Build package
+        run: uv build
+
+      # Check that basic features work and we didn't miss to include crucial files
+      - name: Verify import (wheel)
+        run: uv run --isolated --no-project --with dist/*.whl -- python -c "import labnirs2snirf"
+
+      - name: Verify import (source)
+        run: uv run --isolated --no-project --with dist/*.tar.gz -- python -c "import labnirs2snirf"
+
+      - name: Publish to TestPyPI (OIDC)
+        run: uv publish --publish_url https://test.pypi.org/legacy/
+
+      # - name: Publish package distributions to TestPyPI (OIDC)
+      #   uses: pypa/gh-action-pypi-publish@release/v1
+      #   with:
+      #     package_dir: ./dist
+      #     repository_url: https://test.pypi.org/legacy/
+
+      # - name: Wait for wheel availability on TestPyPI
+      #   run: |
+      #     WHEEL_FILE=$(ls dist/*.whl | head -n 1 | xargs basename)
+      #     echo "Checking for wheel: $WHEEL_FILE"
+
+      #     # Extract package name and version from wheel filename
+      #     # Wheel format: {distribution}-{version}(-{build})?-{python}-{abi}-{platform}.whl
+      #     PACKAGE_NAME=$(echo $WHEEL_FILE | cut -d'-' -f1)
+      #     VERSION=$(echo $WHEEL_FILE | cut -d'-' -f2)
+
+      #     echo "Package: $PACKAGE_NAME, Version: $VERSION"
+
+      #     for i in {1..30}; do
+      #       # Try to download the specific wheel file
+      #       if curl -f -s "https://test.pypi.org/simple/$PACKAGE_NAME/" | grep -q "$WHEEL_FILE"; then
+      #         echo "Wheel $WHEEL_FILE is available on TestPyPI"
+      #         exit 0
+      #       fi
+      #       echo "Attempt $i: Wheel not yet available, waiting 10 seconds..."
+      #       sleep 10
+      #     done
+      #     echo "Wheel $WHEEL_FILE did not become available within 5 minutes"
+      #     exit 1
+
+      # - name: Test installation from TestPyPI
+      #   run: |
+      #     uv venv test-env
+      #     source test-env/bin/activate
+      #     WHEEL_FILE=$(ls dist/*.whl | head -n 1 | xargs basename)
+      #     VERSION=$(echo $WHEEL_FILE | cut -d'-' -f2)
+      #     uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "labnirs2snirf==$VERSION"
+      #     python -c "import labnirs2snirf; print(f'Successfully installed from TestPyPI')"
+
+      # - name: Wait for package availability
+      #   run: |
+      #     VERSION="${{ steps.get_version.outputs.version }}"
+      #     echo "Waiting for labnirs2snirf==$VERSION to become available on TestPyPI..."
+
+      #     for i in {1..30}; do
+      #       if uv pip install --index-url https://test.pypi.org/simple/ --dry-run "labnirs2snirf==$VERSION" 2>/dev/null; then
+      #         echo "Package version $VERSION is available on TestPyPI"
+      #         exit 0
+      #       fi
+      #       echo "Attempt $i: Version $VERSION not yet available, waiting 10 seconds..."
+      #       sleep 10
+      #     done
+      #     echo "Package version $VERSION did not become available within 5 minutes"
+      #     exit 1
+
+      # - name: Test installation from TestPyPI
+      #   run: |
+      #     VERSION="${{ steps.get_version.outputs.version }}"
+      #     uv venv test-env
+      #     source test-env/bin/activate
+      #     uv pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "labnirs2snirf==$VERSION"
+      #     python -c "import labnirs2snirf; print(f'Successfully installed version {labnirs2snirf.__version__} from TestPyPI')"

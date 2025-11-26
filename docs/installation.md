@@ -25,9 +25,16 @@ pip install labnirs2snirf
 
 ## Verify Installation
 
-To verify the installation was successful:
+To verify the installation was successful you can run any of these:
 
 ```bash
+# invoke using the script shortcut, should print usage instructions
+labnirs2snirf -h
+
+# run package as a script, should print usage instructions
+python -m labnirs2snirf
+
+# test if module can be imported for programmatic use
 python -c "import labnirs2snirf; print(labnirs2snirf.__name__)"
 ```
 
