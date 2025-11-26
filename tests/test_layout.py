@@ -62,7 +62,7 @@ class TestReadLayout:
         """Test reading a valid layout file."""
         layout_file = tmp_path / "valid_layout.sfp"
         layout_file.write_text(
-            "S1\t10.0\t20.0\t30.0\nD1\t15.0\t25.0\t35.0\nS2\t11.0\t21.0\t31.0\nD2\t16.0\t26.0\t36.0"
+            "S1\t10.0\t20.0\t30.0\nD1\t15.0\t25.0\t35.0\nS2\t11.0\t21.0\t31.0\nD2\t16.0\t26.0\t36.0",
         )
 
         layout = read_layout(layout_file)
@@ -175,7 +175,7 @@ class TestReadLayout:
             "S1\t1.0\t2.0\t3.0\n"
             "D1\t4.0\t5.0\t6.0\n"
             "Source2\t7.0\t8.0\t9.0\n"
-            "Detector_3\t10.0\t11.0\t12.0"
+            "Detector_3\t10.0\t11.0\t12.0",
         )
 
         layout = read_layout(layout_file)
@@ -270,7 +270,7 @@ class TestReadLayout:
             "S1\t-10.5\t0\t30.0\n"
             "D1\t15\t-25.3\t0.0\n"
             "S2\t0.0\t100\t-50\n"
-            "D2\t-0.1\t-0.2\t-0.3"
+            "D2\t-0.1\t-0.2\t-0.3",
         )
 
         layout = read_layout(layout_file)
@@ -292,18 +292,22 @@ class TestUpdateLayout:
 
         # Check sources
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[0, :], sample_layout_3d["S1"]
+            base_nirs.probe.sourcePos3D[0, :],
+            sample_layout_3d["S1"],
         )
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[1, :], sample_layout_3d["S2"]
+            base_nirs.probe.sourcePos3D[1, :],
+            sample_layout_3d["S2"],
         )
 
         # Check detectors
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[0, :], sample_layout_3d["D1"]
+            base_nirs.probe.detectorPos3D[0, :],
+            sample_layout_3d["D1"],
         )
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[1, :], sample_layout_3d["D2"]
+            base_nirs.probe.detectorPos3D[1, :],
+            sample_layout_3d["D2"],
         )
 
     def test_update_partial_positions_succeeds(self, base_nirs):
@@ -317,22 +321,26 @@ class TestUpdateLayout:
 
         # Check updated source
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[0, :], partial_layout["S1"]
+            base_nirs.probe.sourcePos3D[0, :],
+            partial_layout["S1"],
         )
 
         # Check non-updated source (should remain zero)
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[1, :], [0.0, 0.0, 0.0]
+            base_nirs.probe.sourcePos3D[1, :],
+            [0.0, 0.0, 0.0],
         )
 
         # Check non-updated detector (should remain zero)
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[0, :], [0.0, 0.0, 0.0]
+            base_nirs.probe.detectorPos3D[0, :],
+            [0.0, 0.0, 0.0],
         )
 
         # Check updated detector
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[1, :], partial_layout["D2"]
+            base_nirs.probe.detectorPos3D[1, :],
+            partial_layout["D2"],
         )
 
     def test_update_with_empty_layout_succeeds(self, base_nirs):
@@ -383,10 +391,12 @@ class TestUpdateLayout:
 
         # Check sources are updated
         np.testing.assert_array_equal(
-            nirs_source_only.probe.sourcePos3D[0, :], sample_layout_3d["S1"]
+            nirs_source_only.probe.sourcePos3D[0, :],
+            sample_layout_3d["S1"],
         )
         np.testing.assert_array_equal(
-            nirs_source_only.probe.sourcePos3D[1, :], sample_layout_3d["S2"]
+            nirs_source_only.probe.sourcePos3D[1, :],
+            sample_layout_3d["S2"],
         )
 
         # Detectors should remain zero
@@ -396,7 +406,9 @@ class TestUpdateLayout:
         )
 
     def test_update_with_only_detector_labels_succeeds(
-        self, base_nirs, sample_layout_3d
+        self,
+        base_nirs,
+        sample_layout_3d,
     ):
         """Test updating when only detector labels are present."""
         # Modify base_nirs to have only detector labels
@@ -422,10 +434,12 @@ class TestUpdateLayout:
 
         # Check detectors are updated
         np.testing.assert_array_equal(
-            nirs_detector_only.probe.detectorPos3D[0, :], sample_layout_3d["D1"]
+            nirs_detector_only.probe.detectorPos3D[0, :],
+            sample_layout_3d["D1"],
         )
         np.testing.assert_array_equal(
-            nirs_detector_only.probe.detectorPos3D[1, :], sample_layout_3d["D2"]
+            nirs_detector_only.probe.detectorPos3D[1, :],
+            sample_layout_3d["D2"],
         )
 
     def test_update_with_extra_layout_labels_succeeds(self, base_nirs):
@@ -443,16 +457,20 @@ class TestUpdateLayout:
 
         # Should only update existing probes
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[0, :], layout_with_extra["S1"]
+            base_nirs.probe.sourcePos3D[0, :],
+            layout_with_extra["S1"],
         )
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[1, :], layout_with_extra["S2"]
+            base_nirs.probe.sourcePos3D[1, :],
+            layout_with_extra["S2"],
         )
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[0, :], layout_with_extra["D1"]
+            base_nirs.probe.detectorPos3D[0, :],
+            layout_with_extra["D1"],
         )
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[1, :], layout_with_extra["D2"]
+            base_nirs.probe.detectorPos3D[1, :],
+            layout_with_extra["D2"],
         )
 
         # Verify that only 2 sources and 2 detectors exist (no S3 or D3 in data)
@@ -471,14 +489,18 @@ class TestUpdateLayout:
         update_layout(base_nirs, layout_negative)
 
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[0, :], layout_negative["S1"]
+            base_nirs.probe.sourcePos3D[0, :],
+            layout_negative["S1"],
         )
         np.testing.assert_array_equal(
-            base_nirs.probe.detectorPos3D[0, :], layout_negative["D1"]
+            base_nirs.probe.detectorPos3D[0, :],
+            layout_negative["D1"],
         )
 
     def test_update_preserves_other_probe_attributes_succeeds(
-        self, base_nirs, sample_layout_3d
+        self,
+        base_nirs,
+        sample_layout_3d,
     ):
         """Test that updating positions doesn't modify other probe attributes."""
         original_wavelengths = base_nirs.probe.wavelengths.copy()
@@ -498,11 +520,13 @@ class TestUpdateLayout:
         update_layout(base_nirs, single_probe_layout)
 
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[0, :], single_probe_layout["S1"]
+            base_nirs.probe.sourcePos3D[0, :],
+            single_probe_layout["S1"],
         )
         # Others should remain zero
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[1, :], [0.0, 0.0, 0.0]
+            base_nirs.probe.sourcePos3D[1, :],
+            [0.0, 0.0, 0.0],
         )
 
     def test_update_case_sensitive_labels_succeeds(self, base_nirs):
@@ -516,7 +540,8 @@ class TestUpdateLayout:
 
         # Should match "S1" (uppercase) from probe labels
         np.testing.assert_array_equal(
-            base_nirs.probe.sourcePos3D[0, :], case_layout["S1"]
+            base_nirs.probe.sourcePos3D[0, :],
+            case_layout["S1"],
         )
 
     def test_update_modifies_in_place_succeeds(self, base_nirs, sample_layout_3d):
@@ -525,7 +550,8 @@ class TestUpdateLayout:
         original_probe_id = id(base_nirs.probe)
 
         result = update_layout(  # pylint: disable=assignment-from-no-return
-            base_nirs, sample_layout_3d
+            base_nirs,
+            sample_layout_3d,
         )
 
         # Function returns None
@@ -570,7 +596,10 @@ class TestUpdateLayout:
         np.testing.assert_array_equal(nirs.probe.detectorPos3D[50, :], layout["D51"])
 
     def test_update_logs_debug_and_info_messages_succeeds(
-        self, base_nirs, sample_layout_3d, caplog
+        self,
+        base_nirs,
+        sample_layout_3d,
+        caplog,
     ):
         """Test that updating layout logs DEBUG and INFO level messages."""
         with caplog.at_level(logging.DEBUG):

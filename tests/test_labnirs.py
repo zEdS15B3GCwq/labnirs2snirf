@@ -3,7 +3,6 @@ Unit tests for labnirs module.
 """
 
 import logging
-from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
@@ -24,9 +23,6 @@ from labnirs2snirf.labnirs import (
     read_probe_pairs,
 )
 
-# Test data directory
-TEST_DATA_DIR = Path(__file__).parent
-
 
 class TestExtractData:
     """Tests for the _extract_data function."""
@@ -39,7 +35,7 @@ class TestExtractData:
             {
                 "time": [0.0, 1.0, 2.0],
                 "1-830": [100.0, 101.0, 102.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -50,7 +46,7 @@ class TestExtractData:
                 "detector_index": [None, 1],
                 "datatype": [None, 1],
                 "wavelength_index": [None, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -79,7 +75,7 @@ class TestExtractData:
             {
                 "time": [0.0, 1.0, 2.0],
                 "1-hbo": [0.5, 0.6, 0.7],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -90,7 +86,7 @@ class TestExtractData:
                 "detector_index": [None, 1],
                 "datatype": [None, 99999],
                 "wavelength_index": [None, 0],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -111,7 +107,7 @@ class TestExtractData:
                 "1-830": [100.0, 101.0],
                 "1-780": [90.0, 91.0],
                 "2-830": [110.0, 111.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -122,7 +118,7 @@ class TestExtractData:
                 "detector_index": [None, 1, 1, 1],
                 "datatype": [None, 1, 1, 1],
                 "wavelength_index": [None, 1, 2, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -151,7 +147,7 @@ class TestExtractData:
                 "1-hbo": [0.5, 0.6],
                 "1-hbr": [-0.3, -0.4],
                 "1-hbt": [0.2, 0.2],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -163,7 +159,7 @@ class TestExtractData:
                 "detector_index": [None, 1, 1, 1],
                 "datatype": [None, 99999, 99998, 99997],
                 "wavelength_index": [None, 3, 2, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -191,7 +187,7 @@ class TestExtractData:
                 "time": [0.0, 1.0, 2.0],
                 "task": [0, 0, 0],
                 "mark": ["0", "0", "0"],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -203,7 +199,7 @@ class TestExtractData:
                 "detector_index": [None, None, None],
                 "datatype": [None, None, None],
                 "wavelength_index": [None, None, None],
-            }
+            },
         )
 
         with pytest.raises(
@@ -220,7 +216,7 @@ class TestExtractData:
             {
                 "time": [0.0],
                 "1-830": [100.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -232,7 +228,7 @@ class TestExtractData:
                 "detector_index": [None, 1],
                 "datatype": [None, 1],
                 "wavelength_index": [None, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -264,7 +260,7 @@ class TestExtractData:
             col_name = f"{i + 1}-830"
             data_dict[col_name] = [float(100 + i), float(101 + i)]
             columns_data.append(
-                [3 + i, col_name, "raw", "830", (i % 5) + 1, (i % 3) + 1, 1, 1]
+                [3 + i, col_name, "raw", "830", (i % 5) + 1, (i % 3) + 1, 1, 1],
             )
 
         data = pl.DataFrame(data_dict)
@@ -299,7 +295,7 @@ class TestExtractData:
             {
                 "time": [0.5, 10.0, 100.5],
                 "1-830": [100.0, 101.0, 102.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -311,7 +307,7 @@ class TestExtractData:
                 "detector_index": [None, 1],
                 "datatype": [None, 1],
                 "wavelength_index": [None, 1],
-            }
+            },
         )
 
         _extract_data(data, columns)
@@ -327,7 +323,7 @@ class TestExtractData:
                 "time": [0.0, 1.0],
                 "1-hbo": [0.5, 0.6],
                 "2-hbr": [-0.3, -0.4],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -339,7 +335,7 @@ class TestExtractData:
                 "detector_index": [None, 1, 1],
                 "datatype": [None, 99999, 99999],
                 "wavelength_index": [None, 0, 0],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -357,7 +353,7 @@ class TestExtractData:
                 "1-830": [100.0, 101.0],
                 "1-870": [110.0, 111.0],
                 "2-780": [120.0, 121.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -369,7 +365,7 @@ class TestExtractData:
                 "detector_index": [None, 1, 1, 1, 2],
                 "datatype": [None, 1, 1, 1, 1],
                 "wavelength_index": [None, 1, 2, 3, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -392,7 +388,7 @@ class TestExtractData:
                 "3-830": [300.0, 301.0],
                 "1-830": [100.0, 101.0],
                 "2-830": [200.0, 201.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -404,7 +400,7 @@ class TestExtractData:
                 "detector_index": [None, 1, 1, 1],
                 "datatype": [None, 1, 1, 1],
                 "wavelength_index": [None, 1, 1, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -425,7 +421,7 @@ class TestExtractData:
             {
                 "time": [0.0, 1.0, 2.0],
                 "1-830": [100.0, 101.0, 102.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -437,7 +433,7 @@ class TestExtractData:
                 "detector_index": [None, 1],
                 "datatype": [None, 1],
                 "wavelength_index": [None, 1],
-            }
+            },
         )
 
         result = _extract_data(data, columns)
@@ -456,7 +452,7 @@ class TestExtractData:
                 "time": [0.0, 1.0],
                 "1-830": [100.0, 101.0],
                 "2-780": [90.0, 91.0],
-            }
+            },
         )
         columns = pl.DataFrame(
             {
@@ -468,7 +464,7 @@ class TestExtractData:
                 "detector_index": [None, 1, 1],
                 "datatype": [None, 1, 1],
                 "wavelength_index": [None, 2, 1],
-            }
+            },
         )
 
         _extract_data(data, columns)
@@ -507,7 +503,7 @@ class TestExtractProbes:
         sources = pl.DataFrame({"index": [1, 2, 3], "label": ["S1", "S2", "S3"]})
         detectors = pl.DataFrame({"index": [1, 2], "label": ["D1", "D2"]})
         wavelengths = pl.DataFrame(
-            {"wavelength": [780, 805, 830], "wavelength_index": [1, 2, 3]}
+            {"wavelength": [780, 805, 830], "wavelength_index": [1, 2, 3]},
         )
 
         probe = _extract_probes(sources, detectors, wavelengths)
@@ -542,7 +538,7 @@ class TestExtractProbes:
         sources = pl.DataFrame({"index": [1], "label": ["S1"]})
         detectors = pl.DataFrame({"index": [1], "label": ["D1"]})
         wavelengths = pl.DataFrame(
-            {"wavelength": [780, 830, 870], "wavelength_index": [1, 2, 3]}
+            {"wavelength": [780, 830, 870], "wavelength_index": [1, 2, 3]},
         )
 
         probe = _extract_probes(sources, detectors, wavelengths)
@@ -554,7 +550,8 @@ class TestExtractProbes:
         """Test extraction with empty sources, detectors or wavelengths."""
 
         sources = pl.DataFrame(
-            {"index": [], "label": []}, schema={"index": pl.Int32, "label": pl.String}
+            {"index": [], "label": []},
+            schema={"index": pl.Int32, "label": pl.String},
         )
         detectors = pl.DataFrame({"index": [1], "label": ["D1"]})
         wavelengths = pl.DataFrame({"wavelength": [830], "wavelength_index": [1]})
@@ -565,7 +562,8 @@ class TestExtractProbes:
 
         sources = pl.DataFrame({"index": [1], "label": ["S1"]})
         detectors = pl.DataFrame(
-            {"index": [], "label": []}, schema={"index": pl.Int32, "label": pl.String}
+            {"index": [], "label": []},
+            schema={"index": pl.Int32, "label": pl.String},
         )
         with pytest.raises(LabNirsReadError) as exc_info:
             _extract_probes(sources, detectors, wavelengths)
@@ -587,13 +585,13 @@ class TestExtractProbes:
         caplog.set_level(logging.DEBUG)
 
         sources = pl.DataFrame(
-            {"index": list(range(1, 11)), "label": [f"S{i}" for i in range(1, 11)]}
+            {"index": list(range(1, 11)), "label": [f"S{i}" for i in range(1, 11)]},
         )
         detectors = pl.DataFrame(
-            {"index": list(range(1, 9)), "label": [f"D{i}" for i in range(1, 9)]}
+            {"index": list(range(1, 9)), "label": [f"D{i}" for i in range(1, 9)]},
         )
         wavelengths = pl.DataFrame(
-            {"wavelength": range(700, 901, 20), "wavelength_index": range(11)}
+            {"wavelength": range(700, 901, 20), "wavelength_index": range(11)},
         )
 
         probe = _extract_probes(sources, detectors, wavelengths)
@@ -642,7 +640,7 @@ class TestExtractProbes:
         sources = pl.DataFrame({"index": [1], "label": ["S1"]})
         detectors = pl.DataFrame({"index": [1], "label": ["D1"]})
         wavelengths = pl.DataFrame(
-            {"wavelength": [870, 780, 830], "wavelength_index": [3, 1, 2]}
+            {"wavelength": [870, 780, 830], "wavelength_index": [3, 1, 2]},
         )
 
         probe = _extract_probes(sources, detectors, wavelengths)
@@ -688,11 +686,11 @@ class TestExtractProbes:
 class TestExtractMetadata:
     """Tests for the _extract_metadata function."""
 
-    def test_extract_metadata_complete_header_succeeds(self, caplog):
+    def test_extract_metadata_complete_header_succeeds(self, caplog, small_data_path):
         """Test extraction with all metadata fields present."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
 
         metadata = _extract_metadata(header)
 
@@ -712,11 +710,11 @@ class TestExtractMetadata:
         assert "has date: True" in caplog.text
         assert "has time: True" in caplog.text
 
-    def test_extract_metadata_minimal_header_succeeds(self, caplog):
+    def test_extract_metadata_minimal_header_succeeds(self, caplog, minimal_data_path):
         """Test extraction with minimal metadata (no ID, name, comment)."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
 
         metadata = _extract_metadata(header)
 
@@ -733,11 +731,11 @@ class TestExtractMetadata:
         assert "has date: True" in caplog.text
         assert "has time: True" in caplog.text
 
-    def test_extract_metadata_missing_id_succeeds(self, caplog):
+    def test_extract_metadata_missing_id_succeeds(self, caplog, small_data_path):
         """Test extraction when ID field is missing."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Replace ID line with invalid format
         header[2] = "InvalidID\tnoformat\n"
 
@@ -746,11 +744,11 @@ class TestExtractMetadata:
         assert metadata.SubjectID == ""
         assert "Extracted metadata has subject ID: False" in caplog.text
 
-    def test_extract_metadata_empty_id_succeeds(self, caplog):
+    def test_extract_metadata_empty_id_succeeds(self, caplog, small_data_path):
         """Test extraction when ID field is present but empty."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Set ID to empty string
         header[2] = "ID\t\tVersion\t11.0\n"
 
@@ -759,22 +757,22 @@ class TestExtractMetadata:
         assert metadata.SubjectID == ""
         assert "Extracted metadata has subject ID: False" in caplog.text
 
-    def test_extract_metadata_missing_datetime_fails(self, caplog):
+    def test_extract_metadata_missing_datetime_fails(self, caplog, small_data_path):
         """Test extraction when measurement datetime is missing."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Replace datetime line with invalid format
         header[1] = "Invalid datetime line\n"
 
         with pytest.raises(KeyError):
             _extract_metadata(header)
 
-    def test_extract_metadata_invalid_date_format_fails(self, caplog):
+    def test_extract_metadata_invalid_date_format_fails(self, caplog, small_data_path):
         """Test extraction when date format is invalid (not 3 fields)."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Invalid date format - only 2 fields
         header[1] = "Measured Date\t2023/12 14:30:45\n"
 
@@ -784,11 +782,15 @@ class TestExtractMetadata:
         assert "Invalid measurement date format" in str(exc_info.value)
         assert "2023/12" in str(exc_info.value)
 
-    def test_extract_metadata_invalid_date_format_too_many_fields_fails(self, caplog):
+    def test_extract_metadata_invalid_date_format_too_many_fields_fails(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test extraction when date has too many fields."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Invalid date format - 4 fields
         header[1] = "Measured Date\t2023/12/25/01 14:30:45\n"
 
@@ -798,11 +800,11 @@ class TestExtractMetadata:
         assert "Invalid measurement date format" in str(exc_info.value)
         assert "2023/12/25/01" in str(exc_info.value)
 
-    def test_extract_metadata_invalid_time_format_fails(self, caplog):
+    def test_extract_metadata_invalid_time_format_fails(self, caplog, small_data_path):
         """Test extraction when time format is invalid (not 3 fields)."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Invalid time format - only 2 fields
         header[1] = "Measured Date\t2023/12/25 14:35\n"
 
@@ -812,11 +814,15 @@ class TestExtractMetadata:
         assert "Invalid measurement time format" in str(exc_info.value)
         assert "14:35" in str(exc_info.value)
 
-    def test_extract_metadata_invalid_time_format_too_many_fields_fails(self, caplog):
+    def test_extract_metadata_invalid_time_format_too_many_fields_fails(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test extraction when time has too many fields."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Invalid time format - 4 fields
         header[1] = "Measured Date\t2023/12/25 14:30:45:01\n"
 
@@ -826,11 +832,15 @@ class TestExtractMetadata:
         assert "Invalid measurement time format" in str(exc_info.value)
         assert "14:30:45:01" in str(exc_info.value)
 
-    def test_extract_metadata_date_format_conversion_succeeds(self, caplog):
+    def test_extract_metadata_date_format_conversion_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test that date is converted from slash to dash format."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Ensure date has slashes
         header[1] = "Measured Date\t2023/12/25 14:30:45\n"
 
@@ -839,11 +849,11 @@ class TestExtractMetadata:
         assert metadata.MeasurementDate == "2023-12-25"
         assert metadata.MeasurementTime == "14:30:45"
 
-    def test_extract_metadata_empty_name_succeeds(self, caplog):
+    def test_extract_metadata_empty_name_succeeds(self, caplog, small_data_path):
         """Test extraction when name field is empty."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Set name to empty string
         header[3] = "Name\t\t[HeaderType]\t11.0/11.0\n"
 
@@ -852,11 +862,11 @@ class TestExtractMetadata:
         assert "SubjectName" not in metadata.additional_fields
         assert len(metadata.additional_fields) == 1  # Only comment should be present
 
-    def test_extract_metadata_empty_comment_succeeds(self, caplog):
+    def test_extract_metadata_empty_comment_succeeds(self, caplog, small_data_path):
         """Test extraction when comment field is empty."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Set comment to empty string
         header[4] = "Comment\t\n"
 
@@ -867,11 +877,11 @@ class TestExtractMetadata:
             len(metadata.additional_fields) == 1
         )  # Only SubjectName should be present
 
-    def test_extract_metadata_missing_name_succeeds(self, caplog):
+    def test_extract_metadata_missing_name_succeeds(self, caplog, small_data_path):
         """Test extraction when name field is in wrong format."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Invalid format for name line
         header[3] = "InvalidName\tnoformat\n"
 
@@ -879,11 +889,11 @@ class TestExtractMetadata:
 
         assert "SubjectName" not in metadata.additional_fields
 
-    def test_extract_metadata_missing_comment_succeeds(self, caplog):
+    def test_extract_metadata_missing_comment_succeeds(self, caplog, small_data_path):
         """Test extraction when comment field is in wrong format."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Invalid format for comment line
         header[4] = "InvalidComment\n"
 
@@ -891,11 +901,15 @@ class TestExtractMetadata:
 
         assert "comment" not in metadata.additional_fields
 
-    def test_extract_metadata_special_characters_in_fields_succeeds(self, caplog):
+    def test_extract_metadata_special_characters_in_fields_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test extraction with special characters in metadata fields."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[2] = "ID\tSUBJ@#$123\tVersion\t11.0\n"
         header[3] = "Name\tJohn O'Brien-Smith\t[HeaderType]\t11.0/11.0\n"
         header[4] = "Comment\tTest with special chars: @#$%^&*()\n"
@@ -909,11 +923,11 @@ class TestExtractMetadata:
             == "Test with special chars: @#$%^&*()"
         )
 
-    def test_extract_metadata_default_units_succeeds(self, caplog):
+    def test_extract_metadata_default_units_succeeds(self, caplog, small_data_path):
         """Test that default units are set correctly."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
 
         metadata = _extract_metadata(header)
 
@@ -921,11 +935,15 @@ class TestExtractMetadata:
         assert metadata.TimeUnit == "s"
         assert metadata.FrequencyUnit == "Hz"
 
-    def test_extract_metadata_additional_fields_structure_succeeds(self, caplog):
+    def test_extract_metadata_additional_fields_structure_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test that additional_fields is a dictionary."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
 
         metadata = _extract_metadata(header)
 
@@ -933,11 +951,11 @@ class TestExtractMetadata:
         assert all(isinstance(k, str) for k in metadata.additional_fields)
         assert all(isinstance(v, str) for v in metadata.additional_fields.values())
 
-    def test_extract_metadata_long_comment_succeeds(self, caplog):
+    def test_extract_metadata_long_comment_succeeds(self, caplog, small_data_path):
         """Test extraction with a very long comment."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         long_comment = "This is a very long comment " * 50
         header[4] = f"Comment\t{long_comment}\n"
 
@@ -945,11 +963,15 @@ class TestExtractMetadata:
 
         assert metadata.additional_fields["comment"] == long_comment
 
-    def test_extract_metadata_whitespace_in_fields_succeeds(self, caplog):
+    def test_extract_metadata_whitespace_in_fields_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test extraction preserves whitespace in field values."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[3] = "Name\t  John Doe  \t[HeaderType]\t11.0/11.0\n"
         header[4] = "Comment\t  test comment  \n"
 
@@ -959,33 +981,37 @@ class TestExtractMetadata:
         assert metadata.additional_fields["SubjectName"] == "  John Doe  "
         assert metadata.additional_fields["comment"] == "  test comment  "
 
-    def test_extract_metadata_tabs_in_comment_succeeds(self, caplog):
+    def test_extract_metadata_tabs_in_comment_succeeds(self, caplog, small_data_path):
         """Test extraction with tabs in comment field."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[4] = "Comment\tComment\twith\ttabs\n"
 
         metadata = _extract_metadata(header)
 
         assert metadata.additional_fields["comment"] == "Comment\twith\ttabs"
 
-    def test_extract_metadata_numeric_name_succeeds(self, caplog):
+    def test_extract_metadata_numeric_name_succeeds(self, caplog, small_data_path):
         """Test extraction when name contains only numbers."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[3] = "Name\t12345\t[HeaderType]\t11.0/11.0\n"
 
         metadata = _extract_metadata(header)
 
         assert metadata.additional_fields["SubjectName"] == "12345"
 
-    def test_extract_metadata_logging_presence_of_fields_succeeds(self, caplog):
+    def test_extract_metadata_logging_presence_of_fields_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test that logging correctly reports presence/absence of fields."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
 
         _extract_metadata(header)
 
@@ -995,11 +1021,15 @@ class TestExtractMetadata:
         assert "has time:" in caplog.text
         assert "has additional fields:" in caplog.text
 
-    def test_extract_metadata_only_required_fields_succeeds(self, caplog):
+    def test_extract_metadata_only_required_fields_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test with only required fields (ID, date, time)."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         # Remove name and comment
         header[3] = "OtherField\tvalue\n"
         header[4] = "AnotherField\tvalue\n"
@@ -1011,11 +1041,15 @@ class TestExtractMetadata:
         assert metadata.MeasurementTime == "11:12:13"
         assert len(metadata.additional_fields) == 0
 
-    def test_extract_metadata_date_with_single_digits_succeeds(self, caplog):
+    def test_extract_metadata_date_with_single_digits_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test date extraction with single-digit month/day."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[1] = "Measured Date\t2023/1/5 09:05:03\n"
 
         metadata = _extract_metadata(header)
@@ -1023,22 +1057,30 @@ class TestExtractMetadata:
         assert metadata.MeasurementDate == "2023-01-05"
         assert metadata.MeasurementTime == "09:05:03"
 
-    def test_extract_metadata_time_with_single_digits_succeeds(self, caplog):
+    def test_extract_metadata_time_with_single_digits_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test time extraction with single-digit hours/minutes/seconds."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[1] = "Measured Date\t2023/12/25 1:2:3\n"
 
         metadata = _extract_metadata(header)
 
         assert metadata.MeasurementTime == "01:02:03"
 
-    def test_extract_metadata_datetime_padding_double_digits_succeeds(self, caplog):
+    def test_extract_metadata_datetime_padding_double_digits_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test that double-digit date and time remain unchanged."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[1] = "Measured Date\t2023/12/31 23:59:59\n"
 
         metadata = _extract_metadata(header)
@@ -1059,7 +1101,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0, 3.0, 4.0],
                 "task": [0, 1, 0, 1, 0],
                 "mark": ["0", "1", "0", "1", "0"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1082,7 +1124,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0],
                 "task": [0, 1, 0, 2, 1, 2],
                 "mark": ["0", "1", "0", "1", "1", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1109,7 +1151,7 @@ class TestExtractStims:
                 "time": [0.0, 0.5, 1.0, 2.0, 3.0],
                 "task": [0, 0, 1, 0, 1],
                 "mark": ["0", "0Z", "1", "0", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1135,7 +1177,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0],
                 "task": [0, 0, 0],
                 "mark": ["0Z", "0", "0Z"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1154,7 +1196,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0, 3.0],
                 "task": [0, 0, 0, 0],
                 "mark": ["0", "0", "0", "0"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1182,7 +1224,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0, 3.0],
                 "task": [0, 1, 0, 1],
                 "mark": ["1", "1", "1", "0"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1202,7 +1244,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
                 "task": [1, 2, 3, 4, 5, 1, 3],
                 "mark": ["1", "1", "1", "1", "1", "1", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1225,7 +1267,7 @@ class TestExtractStims:
                 "time": [1.0, 2.0, 3.0],
                 "task": [1, 2, 3],
                 "mark": ["1", "1", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1245,7 +1287,7 @@ class TestExtractStims:
                 "time": [0.0, 0.5, 1.0, 1.5, 2.0, 2.5, 3.0],
                 "task": [0, 1, 0, 2, 0, 1, 0],
                 "mark": ["0Z", "1", "0", "1", "0Z", "1", "0"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1267,7 +1309,7 @@ class TestExtractStims:
                 "time": [5.0, 2.0, 8.0, 1.0, 10.0],
                 "task": [1, 1, 1, 1, 1],
                 "mark": ["1", "1", "1", "1", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1285,7 +1327,7 @@ class TestExtractStims:
                 "time": [0.123, 1.456, 2.789, 3.012],
                 "task": [1, 1, 2, 2],
                 "mark": ["1", "1", "1", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1303,7 +1345,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0],
                 "task": [1, 2, 1],
                 "mark": ["1", "1", "1"],
-            }
+            },
         )
 
         _extract_stims(data)
@@ -1319,7 +1361,7 @@ class TestExtractStims:
                 "time": [0.0, 1.0, 2.0],
                 "task": [100, 999, 100],
                 "mark": ["1", "1", "1"],
-            }
+            },
         )
 
         stims = _extract_stims(data)
@@ -1508,13 +1550,13 @@ class TestReadHeader:
     """Tests for the _read_header function."""
 
     @pytest.mark.parametrize("filename", ["minimal_labnirs.txt", "small_labnirs.txt"])
-    def test_read_header_valid_files_succeeds(self, caplog, filename):
+    def test_read_header_valid_files_succeeds(self, caplog, filename, test_data_dir):
         """Test reading header from valid LabNIRS files."""
         caplog.set_level(logging.DEBUG)
 
         with patch("labnirs2snirf.labnirs._verify_header_format") as mock_verify:
             mock_verify.side_effect = lambda x: None  # No-op for verification
-            header = _read_header(TEST_DATA_DIR / filename)
+            header = _read_header(test_data_dir / filename)
 
         # Check that exactly 35 lines are read
         assert len(header) == 35, f"Expected 35 header lines, got {len(header)}"
@@ -1544,14 +1586,14 @@ class TestReadHeader:
         assert "FileNotFoundError" in caplog.text
         assert "Error reading the header" in caplog.text
 
-    def test_read_header_calls_verify_format_succeeds(self, caplog):
+    def test_read_header_calls_verify_format_succeeds(self, caplog, minimal_data_path):
         """Test that _verify_header_format is called during read."""
         caplog.set_level(logging.DEBUG)
 
         # This will raise if verification fails
         with patch("labnirs2snirf.labnirs._verify_header_format") as mock_verify:
             mock_verify.side_effect = lambda x: None  # No-op for verification
-            _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+            _read_header(minimal_data_path)
 
         # Verify that the verification function was executed
         mock_verify.assert_called_once()
@@ -1573,11 +1615,11 @@ class TestReadHeader:
         assert "Error reading the header" in str(exc_info.value)
         assert "ERROR" in caplog.text
 
-    def test_read_header_io_error_fails(self, caplog):
+    def test_read_header_io_error_fails(self, caplog, minimal_data_path):
         """Test handling of IO errors during file reading."""
         caplog.set_level(logging.DEBUG)
 
-        test_file = TEST_DATA_DIR / "minimal_labnirs.txt"
+        test_file = minimal_data_path
 
         # Mock open to raise IOError
         with patch("builtins.open", side_effect=IOError("Mocked IO error")):
@@ -1588,13 +1630,13 @@ class TestReadHeader:
         assert "ERROR" in caplog.text
         assert "Mocked IO error" in caplog.text
 
-    def test_read_header_preserves_line_content_succeeds(self, caplog):
+    def test_read_header_preserves_line_content_succeeds(self, caplog, small_data_path):
         """Test that header lines are read without modification."""
         caplog.set_level(logging.DEBUG)
 
         with patch("labnirs2snirf.labnirs._verify_header_format") as mock_verify:
             mock_verify.side_effect = lambda x: None  # No-op for verification
-            header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+            header = _read_header(small_data_path)
 
         # First line should contain the expected format marker
         assert " [File Information]      		 [Data Line]	36" + "\n" == header[0]
@@ -1607,11 +1649,11 @@ class TestReadHeader:
             == header[34]
         )
 
-    def test_read_header_logs_filename_succeeds(self, caplog):
+    def test_read_header_logs_filename_succeeds(self, caplog, minimal_data_path):
         """Test that the filename is logged correctly."""
         caplog.set_level(logging.INFO)
 
-        test_file = TEST_DATA_DIR / "minimal_labnirs.txt"
+        test_file = minimal_data_path
         with patch("labnirs2snirf.labnirs._verify_header_format") as mock_verify:
             mock_verify.side_effect = lambda x: None  # No-op for verification
             _read_header(test_file)
@@ -1624,11 +1666,16 @@ class TestVerifyHeaderFormat:
     """Tests for the _verify_header_format function."""
 
     @pytest.mark.parametrize("filename", ["minimal_labnirs.txt", "small_labnirs.txt"])
-    def test_verify_header_format_minimal_file_succeeds(self, caplog, filename):
+    def test_verify_header_format_minimal_file_succeeds(
+        self,
+        caplog,
+        filename,
+        test_data_dir,
+    ):
         """Test header verification with minimal_labnirs.txt file."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / filename)
+        header = _read_header(test_data_dir / filename)
 
         # Should not raise any exception
         _verify_header_format(header)
@@ -1654,30 +1701,38 @@ class TestVerifyHeaderFormat:
         assert "Critical header format error: invalid top line" in str(exc_info.value)
         assert "Checking for critical header format errors" in caplog.text
 
-    def test_verify_header_format_missing_channel_pairs_fails(self, caplog):
+    def test_verify_header_format_missing_channel_pairs_fails(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test that missing channel pairs on line 33 raises LabNirsReadError."""
         caplog.set_level(logging.DEBUG)
 
         # Read a valid header and corrupt line 33 (index 32)
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "Invalid channel pairs line\n"
 
         with pytest.raises(LabNirsReadError) as exc_info:
             _verify_header_format(header)
 
         assert "Critical header format error: channel pairs not found" in str(
-            exc_info.value
+            exc_info.value,
         )
         assert "Expected format: (source,detector)(source,detector)" in str(
-            exc_info.value
+            exc_info.value,
         )
 
-    def test_verify_header_format_wrong_version_warning_succeeds(self, caplog):
+    def test_verify_header_format_wrong_version_warning_succeeds(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test that incorrect version number produces a warning but doesn't raise."""
         caplog.set_level(logging.WARNING)
 
         # Read a valid header and modify the version line
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[2] = "Some\tFields\tVersion\t10.0\n"
         header[3] = "Some\tFields\t[HeaderType]\t10.0/10.0\n"
 
@@ -1689,12 +1744,16 @@ class TestVerifyHeaderFormat:
         assert "HeaderType in line 4 must be '11.0/11.0'" in caplog.text
         assert "Errors may occur" in caplog.text
 
-    def test_verify_header_format_missing_metadata_warnings_succeeds(self, caplog):
+    def test_verify_header_format_missing_metadata_warnings_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test that missing optional metadata produces warnings."""
         caplog.set_level(logging.WARNING)
 
         # Read a valid header and modify the HeaderType line
-        header = _read_header(TEST_DATA_DIR / "small_labnirs.txt")
+        header = _read_header(small_data_path)
         header[1] = (
             "Invalid datetime line\n"  # Line 2: should have measurement datetime
         )
@@ -1715,11 +1774,15 @@ class TestVerifyHeaderFormat:
         assert "Missing subject name metadata" in caplog.text
         assert "Missing comment metadata" in caplog.text
 
-    def test_verify_header_format_correct_number_of_lines_succeeds(self, caplog):
+    def test_verify_header_format_correct_number_of_lines_succeeds(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test that header with correct number of lines is accepted."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
 
         # Verify we have 35 lines (DATA_START_LINE - 1)
         assert len(header) == 35
@@ -1728,11 +1791,15 @@ class TestVerifyHeaderFormat:
 
         assert f"Verifying header format with {len(header)} lines" in caplog.text
 
-    def test_verify_header_format_logs_debug_messages_succeeds(self, caplog):
+    def test_verify_header_format_logs_debug_messages_succeeds(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test that debug logging messages are produced during verification."""
         caplog.set_level(logging.DEBUG)
 
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         _verify_header_format(header)
 
         # Check for expected debug messages
@@ -1745,23 +1812,28 @@ class TestVerifyHeaderFormat:
 class TestReadProbePairs:
     """Tests for the read_probe_pairs function."""
 
-    def test_read_probe_pairs_valid_file_succeeds(self, caplog):
+    def test_read_probe_pairs_valid_file_succeeds(self, caplog, minimal_data_path):
         """Test reading probe pairs from a valid file."""
         caplog.set_level(logging.DEBUG)
 
-        result = read_probe_pairs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_probe_pairs(minimal_data_path)
 
         assert result == "(2,1)(2,2)"
         assert "Reading probe pairs from file" in caplog.text
         assert "Found probe pairs string: (2,1)(2,2)" in caplog.text
 
-    def test_read_probe_pairs_multiple_pairs_succeeds(self, caplog, tmp_path):
+    def test_read_probe_pairs_multiple_pairs_succeeds(
+        self,
+        caplog,
+        tmp_path,
+        minimal_data_path,
+    ):
         """Test reading multiple probe pairs."""
         caplog.set_level(logging.DEBUG)
 
         # Create test file with multiple pairs
         test_file = tmp_path / "test_multiple_pairs.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "(1,1)(2,1)(3,1)(1,2)(2,2)(3,2)\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1770,11 +1842,11 @@ class TestReadProbePairs:
         assert result == "(1,1)(2,1)(3,1)(1,2)(2,2)(3,2)"
         assert "Found probe pairs string" in caplog.text
 
-    def test_read_probe_pairs_single_pair_succeeds(self, tmp_path):
+    def test_read_probe_pairs_single_pair_succeeds(self, tmp_path, minimal_data_path):
         """Test reading a single probe pair."""
 
         test_file = tmp_path / "test_single_pair.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "(1,1)\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1782,11 +1854,15 @@ class TestReadProbePairs:
 
         assert result == "(1,1)"
 
-    def test_read_probe_pairs_non_contiguous_indices_succeeds(self, tmp_path):
+    def test_read_probe_pairs_non_contiguous_indices_succeeds(
+        self,
+        tmp_path,
+        minimal_data_path,
+    ):
         """Test reading probe pairs with non-contiguous indices."""
 
         test_file = tmp_path / "test_non_contiguous.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "(1,1)(5,3)(10,7)\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1794,11 +1870,11 @@ class TestReadProbePairs:
 
         assert result == "(1,1)(5,3)(10,7)"
 
-    def test_read_probe_pairs_large_indices_succeeds(self, tmp_path):
+    def test_read_probe_pairs_large_indices_succeeds(self, tmp_path, minimal_data_path):
         """Test reading probe pairs with large index numbers."""
 
         test_file = tmp_path / "test_large_indices.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "(100,200)(999,888)\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1806,11 +1882,11 @@ class TestReadProbePairs:
 
         assert result == "(100,200)(999,888)"
 
-    def test_read_probe_pairs_with_whitespace_fails(self, tmp_path):
+    def test_read_probe_pairs_with_whitespace_fails(self, tmp_path, minimal_data_path):
         """Test reading probe pairs with leading/trailing whitespace."""
 
         test_file = tmp_path / "test_whitespace.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "  (1,1)(2,1)  \n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1820,11 +1896,11 @@ class TestReadProbePairs:
         ):
             read_probe_pairs(test_file)
 
-    def test_read_probe_pairs_many_pairs_succeeds(self, tmp_path):
+    def test_read_probe_pairs_many_pairs_succeeds(self, tmp_path, minimal_data_path):
         """Test reading many probe pairs."""
 
         test_file = tmp_path / "test_many_pairs.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         # Create 50 probe pairs
         pairs = "".join([f"({i},{j})" for i in range(1, 11) for j in range(1, 6)])
         header[32] = pairs + "\n"
@@ -1847,12 +1923,16 @@ class TestReadProbePairs:
         assert "Data file not found" in str(exc_info.value)
         assert "nonexistent.txt" in str(exc_info.value)
 
-    def test_read_probe_pairs_invalid_header_format_fails(self, tmp_path):
+    def test_read_probe_pairs_invalid_header_format_fails(
+        self,
+        tmp_path,
+        minimal_data_path,
+    ):
         """Test reading from file with invalid header format."""
 
         test_file = tmp_path / "test_invalid_header.txt"
         # Create file with wrong top line
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[0] = "Invalid top line\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1861,11 +1941,15 @@ class TestReadProbePairs:
 
         assert "Critical header format error: invalid top line" in str(exc_info.value)
 
-    def test_read_probe_pairs_missing_pairs_line_fails(self, tmp_path):
+    def test_read_probe_pairs_missing_pairs_line_fails(
+        self,
+        tmp_path,
+        minimal_data_path,
+    ):
         """Test reading from file with missing channel pairs line."""
 
         test_file = tmp_path / "test_missing_pairs.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "Not a valid pairs line\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1873,17 +1957,17 @@ class TestReadProbePairs:
             read_probe_pairs(test_file)
 
         assert "Critical header format error: channel pairs not found" in str(
-            exc_info.value
+            exc_info.value,
         )
         assert "Expected format: (source,detector)(source,detector)" in str(
-            exc_info.value
+            exc_info.value,
         )
 
-    def test_read_probe_pairs_empty_pairs_line_fails(self, tmp_path):
+    def test_read_probe_pairs_empty_pairs_line_fails(self, tmp_path, minimal_data_path):
         """Test reading from file with empty channel pairs line."""
 
         test_file = tmp_path / "test_empty_pairs.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[32] = "\n"
         test_file.write_text("".join(header) + "\n")
 
@@ -1891,7 +1975,7 @@ class TestReadProbePairs:
             read_probe_pairs(test_file)
 
         assert "Critical header format error: channel pairs not found" in str(
-            exc_info.value
+            exc_info.value,
         )
 
     def test_read_probe_pairs_corrupted_file_fails(self, tmp_path):
@@ -1907,39 +1991,48 @@ class TestReadProbePairs:
         ):
             read_probe_pairs(test_file)
 
-    def test_read_probe_pairs_pathlib_path_succeeds(self):
+    def test_read_probe_pairs_pathlib_path_succeeds(self, minimal_data_path):
         """Test that function accepts pathlib.Path objects."""
 
-        path = Path(TEST_DATA_DIR) / "minimal_labnirs.txt"
+        path = minimal_data_path
         result = read_probe_pairs(path)
 
         assert isinstance(result, str)
         assert result == "(2,1)(2,2)"
 
-    def test_read_probe_pairs_logging_file_path_succeeds(self, caplog):
+    def test_read_probe_pairs_logging_file_path_succeeds(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test that the file path is logged correctly."""
         caplog.set_level(logging.INFO)
 
-        test_file = TEST_DATA_DIR / "minimal_labnirs.txt"
+        test_file = minimal_data_path
         read_probe_pairs(test_file)
 
         assert str(test_file) in caplog.text
         assert "Reading probe pairs from file" in caplog.text
 
-    def test_read_probe_pairs_return_type_succeeds(self, caplog):
+    def test_read_probe_pairs_return_type_succeeds(self, caplog, minimal_data_path):
         """Test that the function returns a string."""
         caplog.set_level(logging.DEBUG)
 
-        result = read_probe_pairs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_probe_pairs(minimal_data_path)
 
         assert isinstance(result, str)
 
-    def test_read_probe_pairs_malformed_pairs_format_fails(self, caplog, tmp_path):
+    def test_read_probe_pairs_malformed_pairs_format_fails(
+        self,
+        caplog,
+        tmp_path,
+        minimal_data_path,
+    ):
         """Test reading file with malformed pairs format."""
         caplog.set_level(logging.DEBUG)
 
         test_file = tmp_path / "test_malformed.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         # Missing closing parenthesis
         header[32] = "(1,1)(2,1\n"
         test_file.write_text("".join(header) + "\n")
@@ -1963,11 +2056,11 @@ class TestReadLabnirsIntegration:
             "hb_only.txt",
         ],
     )
-    def test_read_labnirs_valid_files_succeed(self, caplog, filename):
+    def test_read_labnirs_valid_files_succeed(self, caplog, filename, test_data_dir):
         """Test reading all valid LabNIRS files without issues."""
         caplog.set_level(logging.DEBUG)
 
-        result = read_labnirs(TEST_DATA_DIR / filename)
+        result = read_labnirs(test_data_dir / filename)
 
         # Verify successful execution
         assert isinstance(result, model.Nirs)
@@ -1980,11 +2073,15 @@ class TestReadLabnirsIntegration:
         assert "WARNING" not in caplog.text
         assert "ERROR" not in caplog.text
 
-    def test_read_labnirs_minimal_file_default_params_succeeds(self, caplog):
+    def test_read_labnirs_minimal_file_default_params_succeeds(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test reading minimal file with default parameters."""
         caplog.set_level(logging.INFO)
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_labnirs(minimal_data_path)
 
         # Check structure
         assert isinstance(result, model.Nirs)
@@ -2015,7 +2112,7 @@ class TestReadLabnirsIntegration:
                 0.625967,
                 0.774206,
                 0.635424,
-            ]
+            ],
         )
         assert np.all(
             result.data[0].dataTimeSeries[-1, :5]
@@ -2025,7 +2122,7 @@ class TestReadLabnirsIntegration:
                 0.000741,
                 0.775153,
                 0.920161,
-            ]
+            ],
         )
 
         # Check probe
@@ -2046,11 +2143,15 @@ class TestReadLabnirsIntegration:
         assert "Parsing channel pairs and probe information" in caplog.text
         assert "Reading experiment data from file" in caplog.text
 
-    def test_read_labnirs_small_file_with_metadata_succeeds(self, caplog):
+    def test_read_labnirs_small_file_with_metadata_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test reading file with complete metadata."""
         caplog.set_level(logging.INFO)
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt")
+        result = read_labnirs(small_data_path)
 
         assert result.metadata.SubjectID == "ID1"
         assert result.metadata.MeasurementDate == "2000-01-02"
@@ -2060,22 +2161,22 @@ class TestReadLabnirsIntegration:
         assert "comment" in result.metadata.additional_fields
         assert result.metadata.additional_fields["comment"] == "comment1"
 
-    def test_read_labnirs_keep_raw_only_succeeds(self, caplog):
+    def test_read_labnirs_keep_raw_only_succeeds(self, caplog, small_data_path):
         """Test reading with keep_category='raw'."""
         caplog.set_level(logging.INFO)
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt", keep_category="raw")
+        result = read_labnirs(small_data_path, keep_category="raw")
 
         # All measurements should be raw (dataType=1)
         assert all(m.dataType == 1 for m in result.data[0].measurementList)
         assert all(m.dataTypeLabel is None for m in result.data[0].measurementList)
         assert "Filtering to keep only 'raw' data category" in caplog.text
 
-    def test_read_labnirs_keep_hb_only_succeeds(self, caplog):
+    def test_read_labnirs_keep_hb_only_succeeds(self, caplog, small_data_path):
         """Test reading with keep_category='hb'."""
         caplog.set_level(logging.INFO)
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt", keep_category="hb")
+        result = read_labnirs(small_data_path, keep_category="hb")
 
         # All measurements should be Hb (dataType=99999)
         assert all(m.dataType == 99999 for m in result.data[0].measurementList)
@@ -2086,12 +2187,12 @@ class TestReadLabnirsIntegration:
         assert all(m.wavelengthIndex == 0 for m in result.data[0].measurementList)
         assert "Filtering to keep only 'hb' data category" in caplog.text
 
-    def test_read_labnirs_drop_wavelength_succeeds(self, caplog):
+    def test_read_labnirs_drop_wavelength_succeeds(self, caplog, small_data_path):
         """Test dropping specific wavelengths."""
         caplog.set_level(logging.DEBUG)
 
         result = read_labnirs(
-            TEST_DATA_DIR / "small_labnirs.txt",
+            small_data_path,
             keep_category="raw",
             drop_subtype=["830"],
         )
@@ -2100,12 +2201,12 @@ class TestReadLabnirsIntegration:
         assert 830.0 not in result.probe.wavelengths
         assert "Dropping columns based on subtype filter" in caplog.text
 
-    def test_read_labnirs_drop_hb_type_succeeds(self, caplog):
+    def test_read_labnirs_drop_hb_type_succeeds(self, caplog, small_data_path):
         """Test dropping specific Hb types."""
         caplog.set_level(logging.DEBUG)
 
         result = read_labnirs(
-            TEST_DATA_DIR / "small_labnirs.txt",
+            small_data_path,
             keep_category="hb",
             drop_subtype=["hbt"],
         )
@@ -2114,29 +2215,37 @@ class TestReadLabnirsIntegration:
         assert all(m.dataTypeLabel != "HbT" for m in result.data[0].measurementList)
         assert "Dropping columns based on subtype filter" in caplog.text
 
-    def test_read_labnirs_drop_multiple_subtypes_succeeds(self, caplog):
+    def test_read_labnirs_drop_multiple_subtypes_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test dropping multiple subtypes."""
         caplog.set_level(logging.DEBUG)
 
         result = read_labnirs(
-            TEST_DATA_DIR / "small_labnirs.txt", drop_subtype={"hbo", "830"}
+            small_data_path,
+            drop_subtype={"hbo", "830"},
         )
 
         # Should not have HbO or wavelength 830
         assert all(m.dataTypeLabel != "HbO" for m in result.data[0].measurementList)
         assert 830.0 not in result.probe.wavelengths
 
-    def test_read_labnirs_data_time_consistency_succeeds(self):
+    def test_read_labnirs_data_time_consistency_succeeds(self, minimal_data_path):
         """Test that time array and data array have consistent dimensions."""
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_labnirs(minimal_data_path)
 
         assert result.data[0].time.shape[0] == result.data[0].dataTimeSeries.shape[0]
 
-    def test_read_labnirs_probe_indices_match_measurements_succeeds(self):
+    def test_read_labnirs_probe_indices_match_measurements_succeeds(
+        self,
+        minimal_data_path,
+    ):
         """Test that probe indices in measurements match probe arrays."""
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_labnirs(minimal_data_path)
 
         max_source_idx = max(m.sourceIndex for m in result.data[0].measurementList)
         max_detector_idx = max(m.detectorIndex for m in result.data[0].measurementList)
@@ -2144,20 +2253,20 @@ class TestReadLabnirsIntegration:
         assert max_source_idx <= result.probe.sourcePos3D.shape[0]
         assert max_detector_idx <= result.probe.detectorPos3D.shape[0]
 
-    def test_read_labnirs_wavelength_indices_valid_succeeds(self):
+    def test_read_labnirs_wavelength_indices_valid_succeeds(self, small_data_path):
         """Test that wavelength indices in measurements are valid."""
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt", keep_category="raw")
+        result = read_labnirs(small_data_path, keep_category="raw")
 
         max_wavelength_idx = max(
             m.wavelengthIndex for m in result.data[0].measurementList
         )
         assert max_wavelength_idx <= len(result.probe.wavelengths)
 
-    def test_read_labnirs_stim_extraction_succeeds(self):
+    def test_read_labnirs_stim_extraction_succeeds(self, small_data_path):
         """Test that stimuli are correctly extracted when present."""
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt")
+        result = read_labnirs(small_data_path)
 
         assert result.stim is not None
         assert len(result.stim) > 0
@@ -2166,10 +2275,10 @@ class TestReadLabnirsIntegration:
         assert all(isinstance(s.data, np.ndarray) for s in result.stim)
         assert {s.name for s in result.stim} == {"Z", "0", "1", "2"}
 
-    def test_read_labnirs_probe_labels_complete_succeeds(self):
+    def test_read_labnirs_probe_labels_complete_succeeds(self, minimal_data_path):
         """Test that probe labels are complete and correctly formatted."""
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_labnirs(minimal_data_path)
 
         assert result.probe.sourceLabels is not None
         assert result.probe.detectorLabels is not None
@@ -2178,26 +2287,31 @@ class TestReadLabnirsIntegration:
         assert all(label.startswith("S") for label in result.probe.sourceLabels)
         assert all(label.startswith("D") for label in result.probe.detectorLabels)
 
-    def test_read_labnirs_invalid_keep_category_fails(self):
+    def test_read_labnirs_invalid_keep_category_fails(self, minimal_data_path):
         """Test error handling for invalid keep_category parameter."""
 
         with pytest.raises(LabNirsReadError, match="Invalid parameters.*keep_category"):
-            read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt", keep_category="invalid")
+            read_labnirs(minimal_data_path, keep_category="invalid")
 
-    def test_read_labnirs_invalid_drop_subtype_not_collection_fails(self):
+    def test_read_labnirs_invalid_drop_subtype_not_collection_fails(
+        self,
+        minimal_data_path,
+    ):
         """Test error handling for invalid drop_subtype type."""
 
         with pytest.raises(LabNirsReadError, match="Invalid parameters.*drop_subtype"):
             read_labnirs(
-                TEST_DATA_DIR / "minimal_labnirs.txt", drop_subtype="not_a_collection"
+                minimal_data_path,
+                drop_subtype="not_a_collection",
             )
 
-    def test_read_labnirs_invalid_drop_subtype_value_fails(self):
+    def test_read_labnirs_invalid_drop_subtype_value_fails(self, minimal_data_path):
         """Test error handling for invalid drop_subtype values."""
 
         with pytest.raises(LabNirsReadError, match="Invalid parameters.*drop_subtype"):
             read_labnirs(
-                TEST_DATA_DIR / "minimal_labnirs.txt", drop_subtype=["invalid_type"]
+                minimal_data_path,
+                drop_subtype=["invalid_type"],
             )
 
     def test_read_labnirs_nonexistent_file_fails(self, tmp_path):
@@ -2215,25 +2329,32 @@ class TestReadLabnirsIntegration:
         with pytest.raises(LabNirsReadError, match="Critical header format error"):
             read_labnirs(corrupted_file)
 
-    def test_read_labnirs_measurement_list_datatype_index_consistency_succeeds(self):
+    def test_read_labnirs_measurement_list_datatype_index_consistency_succeeds(
+        self,
+        small_data_path,
+    ):
         """Test that all measurements have dataTypeIndex=0."""
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt")
+        result = read_labnirs(small_data_path)
 
         assert all(m.dataTypeIndex == 0 for m in result.data[0].measurementList)
 
-    def test_read_labnirs_case_insensitive_parameters_succeeds(self, caplog):
+    def test_read_labnirs_case_insensitive_parameters_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test that parameters are case-insensitive."""
         caplog.set_level(logging.INFO)
 
         result1 = read_labnirs(
-            TEST_DATA_DIR / "small_labnirs.txt",
+            small_data_path,
             keep_category="RAW",
             drop_subtype=["HBO"],
         )
 
         result2 = read_labnirs(
-            TEST_DATA_DIR / "small_labnirs.txt",
+            small_data_path,
             keep_category="raw",
             drop_subtype=["hbo"],
         )
@@ -2242,20 +2363,20 @@ class TestReadLabnirsIntegration:
             result1.data[0].dataTimeSeries.shape == result2.data[0].dataTimeSeries.shape
         )
 
-    def test_read_labnirs_all_data_types_present_succeeds(self):
+    def test_read_labnirs_all_data_types_present_succeeds(self, small_data_path):
         """Test that reading with keep_category='all' includes both raw and hb."""
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt", keep_category="all")
+        result = read_labnirs(small_data_path, keep_category="all")
 
         datatypes = {m.dataType for m in result.data[0].measurementList}
         # Should have both dataType=1 (raw) and dataType=99999 (Hb)
         assert all(t == 1 or t == 99999 for t in datatypes)
 
-    def test_read_labnirs_logging_progression_succeeds(self, caplog):
+    def test_read_labnirs_logging_progression_succeeds(self, caplog, minimal_data_path):
         """Test that all major processing steps are logged."""
         caplog.set_level(logging.INFO)
 
-        read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        read_labnirs(minimal_data_path)
 
         expected_messages = [
             "Validating input parameters",
@@ -2269,10 +2390,10 @@ class TestReadLabnirsIntegration:
         for message in expected_messages:
             assert message in caplog.text
 
-    def test_read_labnirs_data_array_dtype_succeeds(self):
+    def test_read_labnirs_data_array_dtype_succeeds(self, minimal_data_path):
         """Test that data arrays have correct numpy dtypes."""
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_labnirs(minimal_data_path)
 
         assert result.data[0].time.dtype == np.float64
         assert result.data[0].dataTimeSeries.dtype == np.float64
@@ -2280,18 +2401,21 @@ class TestReadLabnirsIntegration:
         assert result.probe.sourcePos3D.dtype == np.float64
         assert result.probe.detectorPos3D.dtype == np.float64
 
-    def test_read_labnirs_probe_positions_zero_initialized_succeeds(self):
+    def test_read_labnirs_probe_positions_zero_initialized_succeeds(
+        self,
+        minimal_data_path,
+    ):
         """Test that all probe positions are initialized to zero."""
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt")
+        result = read_labnirs(minimal_data_path)
 
         assert np.all(result.probe.sourcePos3D == 0.0)
         assert np.all(result.probe.detectorPos3D == 0.0)
 
-    def test_read_labnirs_stim_times_within_data_range_succeeds(self):
+    def test_read_labnirs_stim_times_within_data_range_succeeds(self, small_data_path):
         """Test that stimulus times fall within the data time range."""
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt")
+        result = read_labnirs(small_data_path)
 
         if result.stim:
             min_time = result.data[0].time.min()
@@ -2301,19 +2425,26 @@ class TestReadLabnirsIntegration:
                     assert np.all(stim.data >= min_time)
                     assert np.all(stim.data <= max_time)
 
-    def test_read_labnirs_empty_drop_subtype_set_succeeds(self, caplog):
+    def test_read_labnirs_empty_drop_subtype_set_succeeds(
+        self,
+        caplog,
+        minimal_data_path,
+    ):
         """Test that empty drop_subtype set works correctly."""
         caplog.set_level(logging.DEBUG)
 
-        result = read_labnirs(TEST_DATA_DIR / "minimal_labnirs.txt", drop_subtype=set())
+        result = read_labnirs(minimal_data_path, drop_subtype=set())
 
         assert result is not None
         assert "No column subtypes specified for dropping" in caplog.text
 
-    def test_read_labnirs_measurement_list_order_matches_columns_succeeds(self):
+    def test_read_labnirs_measurement_list_order_matches_columns_succeeds(
+        self,
+        small_data_path,
+    ):
         """Test that measurement list order matches data column order."""
 
-        result = read_labnirs(TEST_DATA_DIR / "small_labnirs.txt", keep_category="raw")
+        result = read_labnirs(small_data_path, keep_category="raw")
 
         # First measurement should correspond to first data column
         # This is implicitly tested by shape consistency but adding explicit check
@@ -2322,18 +2453,23 @@ class TestReadLabnirsIntegration:
             == result.data[0].dataTimeSeries.shape[1]
         )
 
-    def test_read_labnirs_warning_for_version_mismatch_succeeds(self, caplog, tmp_path):
+    def test_read_labnirs_warning_for_version_mismatch_succeeds(
+        self,
+        caplog,
+        tmp_path,
+        minimal_data_path,
+    ):
         """Test that version mismatch produces warning but doesn't fail."""
         caplog.set_level(logging.WARNING)
 
         # Create file with wrong version
         test_file = tmp_path / "wrong_version.txt"
-        header = _read_header(TEST_DATA_DIR / "minimal_labnirs.txt")
+        header = _read_header(minimal_data_path)
         header[2] = "Some\tFields\tVersion\t10.0\n"
         header[3] = "Some\tFields\t[HeaderType]\t10.0/10.0\n"
 
         # Need to create a full file with data
-        with open(TEST_DATA_DIR / "minimal_labnirs.txt", "r", encoding="utf-8") as f:
+        with open(minimal_data_path, encoding="utf-8") as f:
             lines = f.readlines()
         lines[:3] = header[:3]
         test_file.write_text("".join(lines))
@@ -2344,12 +2480,18 @@ class TestReadLabnirsIntegration:
         assert result is not None
         assert "Version number in line 3 must be '11.0'" in caplog.text
 
-    def test_read_labnirs_complete_workflow_integration_succeeds(self, caplog):
+    def test_read_labnirs_complete_workflow_integration_succeeds(
+        self,
+        caplog,
+        small_data_path,
+    ):
         """Test complete workflow from file to model with all components."""
         caplog.set_level(logging.DEBUG)
 
         result = read_labnirs(
-            TEST_DATA_DIR / "small_labnirs.txt", keep_category="all", drop_subtype=None
+            small_data_path,
+            keep_category="all",
+            drop_subtype=None,
         )
 
         # Verify all components are present and valid
@@ -2386,18 +2528,22 @@ class TestReadLabnirsIntegration:
         assert "Extracted metadata" in caplog.text
         assert "Found" in caplog.text and "stimulus types" in caplog.text
 
-    def test_read_labnirs_keep_category_not_string_fails(self):
+    def test_read_labnirs_keep_category_not_string_fails(self, minimal_data_path):
         """Test error handling for non-string keep_category parameter."""
 
         with pytest.raises(
-            LabNirsReadError, match="Invalid parameters.*must be a string"
+            LabNirsReadError,
+            match="Invalid parameters.*must be a string",
         ):
             read_labnirs(
-                TEST_DATA_DIR / "minimal_labnirs.txt",
+                minimal_data_path,
                 keep_category=123,  # ty: ignore[invalid-argument-type] # type: ignore
             )
 
-    def test_read_labnirs_drop_subtype_with_non_string_elements_fails(self):
+    def test_read_labnirs_drop_subtype_with_non_string_elements_fails(
+        self,
+        minimal_data_path,
+    ):
         """Test error handling for drop_subtype with non-string elements."""
 
         with pytest.raises(
@@ -2405,14 +2551,14 @@ class TestReadLabnirsIntegration:
             match="Invalid parameters.*must be a collection of strings or None",
         ):
             read_labnirs(
-                TEST_DATA_DIR / "minimal_labnirs.txt",
+                minimal_data_path,
                 drop_subtype={
                     123,  # type: ignore
                     "hbo",
                 },  # ty: ignore[invalid-argument-type]
             )
 
-    def test_read_labnirs_raw_only_keep_hb_fails(self, caplog):
+    def test_read_labnirs_raw_only_keep_hb_fails(self, caplog, rawonly_data_path):
         """Test that keeping only Hb data from raw-only file fails."""
         caplog.set_level(logging.DEBUG)
 
@@ -2420,13 +2566,13 @@ class TestReadLabnirsIntegration:
             LabNirsReadError,
             match="No data columns found after filtering; cannot extract data.",
         ):
-            read_labnirs(TEST_DATA_DIR / "raw_only.txt", keep_category="hb")
+            read_labnirs(rawonly_data_path, keep_category="hb")
 
-    def test_read_labnirs_raw_only_keep_all_succeeds(self, caplog):
+    def test_read_labnirs_raw_only_keep_all_succeeds(self, caplog, rawonly_data_path):
         """Test that keeping all data from raw-only file succeeds."""
         caplog.set_level(logging.DEBUG)
 
-        result = read_labnirs(TEST_DATA_DIR / "raw_only.txt", keep_category="all")
+        result = read_labnirs(rawonly_data_path, keep_category="all")
 
         # Should succeed with only raw data present
         assert isinstance(result, model.Nirs)
@@ -2436,11 +2582,11 @@ class TestReadLabnirsIntegration:
         assert result.data[0].dataTimeSeries.shape[1] == 6
         assert "Keeping all data categories (keep_category=all)" in caplog.text
 
-    def test_read_labnirs_raw_only_keep_raw_succeeds(self, caplog):
+    def test_read_labnirs_raw_only_keep_raw_succeeds(self, caplog, rawonly_data_path):
         """Test that keeping raw data from raw-only file succeeds."""
         caplog.set_level(logging.DEBUG)
 
-        result = read_labnirs(TEST_DATA_DIR / "raw_only.txt", keep_category="raw")
+        result = read_labnirs(rawonly_data_path, keep_category="raw")
 
         # Should succeed with 6 data columns
         assert isinstance(result, model.Nirs)
@@ -2449,12 +2595,17 @@ class TestReadLabnirsIntegration:
         assert all(m.dataTypeLabel is None for m in result.data[0].measurementList)
         assert "Filtering to keep only 'raw' data category" in caplog.text
 
-    def test_read_labnirs_raw_only_drop_hb_types_succeeds(self, caplog):
+    def test_read_labnirs_raw_only_drop_hb_types_succeeds(
+        self,
+        caplog,
+        rawonly_data_path,
+    ):
         """Test that dropping Hb types from raw-only file has no effect."""
         caplog.set_level(logging.DEBUG)
 
         result = read_labnirs(
-            TEST_DATA_DIR / "raw_only.txt", drop_subtype=["hbo", "hbr", "hbt"]
+            rawonly_data_path,
+            drop_subtype=["hbo", "hbr", "hbt"],
         )
 
         # Should succeed with all raw data still present
@@ -2464,7 +2615,11 @@ class TestReadLabnirsIntegration:
         assert all(m.dataType == 1 for m in result.data[0].measurementList)
         assert "Dropping columns based on subtype filter" in caplog.text
 
-    def test_read_labnirs_raw_only_drop_all_wavelengths_fails(self, caplog):
+    def test_read_labnirs_raw_only_drop_all_wavelengths_fails(
+        self,
+        caplog,
+        rawonly_data_path,
+    ):
         """Test that dropping all wavelengths from raw-only file fails."""
         caplog.set_level(logging.DEBUG)
 
@@ -2473,10 +2628,11 @@ class TestReadLabnirsIntegration:
             match="No data columns found after filtering; cannot extract data.",
         ):
             read_labnirs(
-                TEST_DATA_DIR / "raw_only.txt", drop_subtype=["780", "805", "830"]
+                rawonly_data_path,
+                drop_subtype=["780", "805", "830"],
             )
 
-    def test_read_labnirs_hb_only_keep_raw_fails(self, caplog):
+    def test_read_labnirs_hb_only_keep_raw_fails(self, caplog, hbonly_data_path):
         """Test that keeping only raw data from hb-only file fails."""
         caplog.set_level(logging.DEBUG)
 
@@ -2484,13 +2640,13 @@ class TestReadLabnirsIntegration:
             LabNirsReadError,
             match="No data columns found after filtering; cannot extract data.",
         ):
-            read_labnirs(TEST_DATA_DIR / "hb_only.txt", keep_category="raw")
+            read_labnirs(hbonly_data_path, keep_category="raw")
 
-    def test_read_labnirs_hb_only_keep_all_succeeds(self, caplog):
+    def test_read_labnirs_hb_only_keep_all_succeeds(self, caplog, hbonly_data_path):
         """Test that keeping all data from hb-only file succeeds."""
         caplog.set_level(logging.INFO)
 
-        result = read_labnirs(TEST_DATA_DIR / "hb_only.txt", keep_category="all")
+        result = read_labnirs(hbonly_data_path, keep_category="all")
 
         # Should succeed with only Hb data present
         assert isinstance(result, model.Nirs)
@@ -2503,11 +2659,11 @@ class TestReadLabnirsIntegration:
         assert result.data[0].dataTimeSeries.shape[1] == 6
         assert "Keeping all data categories (keep_category=all)" in caplog.text
 
-    def test_read_labnirs_hb_only_keep_hb_succeeds(self, caplog):
+    def test_read_labnirs_hb_only_keep_hb_succeeds(self, caplog, hbonly_data_path):
         """Test that keeping Hb data from hb-only file succeeds."""
         caplog.set_level(logging.INFO)
 
-        result = read_labnirs(TEST_DATA_DIR / "hb_only.txt", keep_category="hb")
+        result = read_labnirs(hbonly_data_path, keep_category="hb")
 
         # Should succeed with 6 data columns
         assert isinstance(result, model.Nirs)
@@ -2519,12 +2675,17 @@ class TestReadLabnirsIntegration:
         )
         assert "Filtering to keep only 'hb' data category" in caplog.text
 
-    def test_read_labnirs_hb_only_drop_wavelengths_succeeds(self, caplog):
+    def test_read_labnirs_hb_only_drop_wavelengths_succeeds(
+        self,
+        caplog,
+        hbonly_data_path,
+    ):
         """Test that dropping wavelengths from hb-only file has no effect."""
         caplog.set_level(logging.DEBUG)
 
         result = read_labnirs(
-            TEST_DATA_DIR / "hb_only.txt", drop_subtype=["780", "805", "830"]
+            hbonly_data_path,
+            drop_subtype=["780", "805", "830"],
         )
 
         # Should succeed with all Hb data still present
@@ -2534,7 +2695,11 @@ class TestReadLabnirsIntegration:
         assert all(m.dataType == 99999 for m in result.data[0].measurementList)
         assert "Dropping columns based on subtype filter" in caplog.text
 
-    def test_read_labnirs_hb_only_drop_all_hb_types_fails(self, caplog):
+    def test_read_labnirs_hb_only_drop_all_hb_types_fails(
+        self,
+        caplog,
+        hbonly_data_path,
+    ):
         """Test that dropping all Hb types from hb-only file fails."""
         caplog.set_level(logging.DEBUG)
 
@@ -2543,5 +2708,6 @@ class TestReadLabnirsIntegration:
             match="No data columns found after filtering; cannot extract data.",
         ):
             read_labnirs(
-                TEST_DATA_DIR / "hb_only.txt", drop_subtype=["hbo", "hbr", "hbt"]
+                hbonly_data_path,
+                drop_subtype=["hbo", "hbr", "hbt"],
             )

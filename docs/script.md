@@ -9,6 +9,7 @@ This page contains the documentation of modules needed to run as a script.
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: model
 ```
 
 ## Parsing command-line arguments

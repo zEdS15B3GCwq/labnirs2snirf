@@ -37,7 +37,7 @@ def fixture_minimal_nirs():
             wavelengthIndex=1,
             dataType=1,
             dataTypeIndex=1,
-        )
+        ),
     ]
     data = model.Data(
         time=time,
@@ -75,7 +75,8 @@ def fixture_full_nirs():
 
     time = np.array([0.0, 1.0, 2.0, 3.0], dtype=np.float64)
     data_series = np.array(
-        [[1.0, 2.0], [1.1, 2.1], [1.2, 2.2], [1.3, 2.3]], dtype=np.float64
+        [[1.0, 2.0], [1.1, 2.1], [1.2, 2.2], [1.3, 2.3]],
+        dtype=np.float64,
     )
     measurement_list = [
         model.Measurement(
@@ -206,7 +207,7 @@ def fixture_unicode_nirs(minimal_nirs):
             dataType=1,
             dataTypeIndex=1,
             dataTypeLabel="HbÖ",
-        )
+        ),
     ]
     data = model.Data(
         time=minimal_nirs.data[0].time,
@@ -439,7 +440,7 @@ def fixture_negative_nirs():
             wavelengthIndex=-3,
             dataType=-4,
             dataTypeIndex=-5,
-        )
+        ),
     ]
     data = model.Data(
         time=time,
@@ -457,7 +458,7 @@ def fixture_negative_nirs():
     )
 
     stims = [
-        model.Stim(name="Task", data=np.array([-1.0, -2.0, -3.0], dtype=np.float64))
+        model.Stim(name="Task", data=np.array([-1.0, -2.0, -3.0], dtype=np.float64)),
     ]
 
     return model.Nirs(metadata=metadata, data=[data], probe=probe, stim=stims)
@@ -480,7 +481,7 @@ def fixture_unsorted_nirs(minimal_nirs):
     probe = minimal_nirs.probe
 
     stims = [
-        model.Stim(name="Task", data=np.array([5.0, 2.0, 8.0, 1.0], dtype=np.float64))
+        model.Stim(name="Task", data=np.array([5.0, 2.0, 8.0, 1.0], dtype=np.float64)),
     ]
 
     return model.Nirs(metadata=metadata, data=[data], probe=probe, stim=stims)
@@ -504,7 +505,7 @@ def fixture_zero_nirs():
             wavelengthIndex=0,
             dataType=0,
             dataTypeIndex=0,
-        )
+        ),
     ]
     data = model.Data(
         time=time,
@@ -548,7 +549,7 @@ def fixture_whitespace_nirs(minimal_nirs):
             dataType=1,
             dataTypeIndex=1,
             dataTypeLabel="  HbO  ",
-        )
+        ),
     ]
     data = model.Data(
         time=minimal_nirs.data[0].time,
@@ -793,7 +794,10 @@ class TestWriteMetadataGroup:
         ],
     )
     def test_write_metadata_group_valid_datasets_succeeds(
-        self, tmp_path, nirs_fixture, request
+        self,
+        tmp_path,
+        nirs_fixture,
+        request,
     ):
         """Test writing metadata with various valid datasets."""
         nirs = request.getfixturevalue(nirs_fixture)
@@ -808,7 +812,10 @@ class TestWriteMetadataGroup:
             validate_metadata_group(nirs.metadata, f)
 
     def test_write_metadata_group_with_logging_succeeds(
-        self, tmp_path, minimal_nirs, caplog
+        self,
+        tmp_path,
+        minimal_nirs,
+        caplog,
     ):
         """Test that metadata writing produces correct log messages."""
         output_file = tmp_path / "test_metadata_logging.h5"
@@ -830,7 +837,9 @@ class TestWriteMetadataGroup:
         output_file = tmp_path / "test_metadata_wrong_path.h5"
 
         metadata = model.Metadata(
-            SubjectID="S007", MeasurementDate="2024-07-25", MeasurementTime="15:20:00"
+            SubjectID="S007",
+            MeasurementDate="2024-07-25",
+            MeasurementTime="15:20:00",
         )
 
         with caplog.at_level(logging.ERROR):
@@ -869,7 +878,10 @@ class TestWriteDataGroup:
         ],
     )
     def test_write_data_group_valid_datasets_succeeds(
-        self, tmp_path, nirs_fixture, request
+        self,
+        tmp_path,
+        nirs_fixture,
+        request,
     ):
         """Test writing data group with various valid datasets."""
         nirs = request.getfixturevalue(nirs_fixture)
@@ -884,7 +896,10 @@ class TestWriteDataGroup:
             validate_data_group(nirs.data[0], f)
 
     def test_write_data_group_logging_output_succeeds(
-        self, tmp_path, full_nirs, caplog
+        self,
+        tmp_path,
+        full_nirs,
+        caplog,
     ):
         """Test that data writing produces correct log messages at various levels."""
         output_file = tmp_path / "test_data_logging.h5"
@@ -945,7 +960,10 @@ class TestWriteStimGroup:
         ],
     )
     def test_write_stim_group_valid_datasets_succeeds(
-        self, tmp_path, nirs_fixture, request
+        self,
+        tmp_path,
+        nirs_fixture,
+        request,
     ):
         """Test writing stim group with various valid datasets."""
         nirs = request.getfixturevalue(nirs_fixture)
@@ -991,7 +1009,8 @@ class TestWriteStimGroup:
 
             with caplog.at_level(logging.ERROR):
                 with pytest.raises(
-                    SnirfWriteError, match="Stimulus group must be at /nirs"
+                    SnirfWriteError,
+                    match="Stimulus group must be at /nirs",
                 ):
                     _write_stim_group(full_nirs.stim, wrong_group)
 
@@ -1032,7 +1051,10 @@ class TestWriteProbeGroup:
         ],
     )
     def test_write_probe_group_valid_datasets_succeeds(
-        self, tmp_path, nirs_fixture, request
+        self,
+        tmp_path,
+        nirs_fixture,
+        request,
     ):
         """Test writing probe group with various valid datasets."""
         nirs = request.getfixturevalue(nirs_fixture)
@@ -1047,7 +1069,11 @@ class TestWriteProbeGroup:
             validate_probe_group(nirs.probe, f)
 
     def test_write_probe_group_logging_output_succeeds(
-        self, tmp_path, full_nirs, minimal_nirs, caplog
+        self,
+        tmp_path,
+        full_nirs,
+        minimal_nirs,
+        caplog,
     ):
         """Test that probe writing produces correct log messages with and without labels."""
         output_file = tmp_path / "test_probe_logging.h5"
@@ -1120,7 +1146,8 @@ class TestWriteProbeGroup:
                 wrong_group = f.create_group("/wrong/path")
 
                 with pytest.raises(
-                    SnirfWriteError, match="Probe group must be at /nirs/probe"
+                    SnirfWriteError,
+                    match="Probe group must be at /nirs/probe",
                 ):
                     _write_probe_group(minimal_nirs.probe, wrong_group)
 
@@ -1163,7 +1190,10 @@ class TestWriteSnirfIntegration:
             validate_snirf_file(nirs, f)
 
     def test_write_snirf_non_snirf_extension_warning_succeeds(
-        self, tmp_path, minimal_nirs, caplog
+        self,
+        tmp_path,
+        minimal_nirs,
+        caplog,
     ):
         """Test that a warning is logged when output file doesn't have .snirf extension."""
         output_file = tmp_path / "test_file.hdf5"
@@ -1180,7 +1210,10 @@ class TestWriteSnirfIntegration:
         assert output_file.exists()
 
     def test_write_snirf_overwrite_existing_file_succeeds(
-        self, tmp_path, minimal_nirs, full_nirs
+        self,
+        tmp_path,
+        minimal_nirs,
+        full_nirs,
     ):
         """Test that writing to an existing file overwrites it correctly."""
         output_file = tmp_path / "test_overwrite.snirf"

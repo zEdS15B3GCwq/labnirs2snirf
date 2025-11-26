@@ -276,7 +276,10 @@ class TestArgumentsParse:
     """Tests for Arguments.parse() method."""
 
     def test_parse_minimal_arguments_succeeds(
-        self, existing_file, tmp_path, monkeypatch
+        self,
+        existing_file,
+        tmp_path,
+        monkeypatch,
     ):
         """Test parsing with only required source file argument."""
         monkeypatch.chdir(tmp_path)  # Makes sure there's no existing output.snirf
@@ -301,7 +304,10 @@ class TestArgumentsParse:
         assert result.target_file == nonexistent_file
 
     def test_parse_with_locations_file_succeeds(
-        self, existing_file, tmp_path, monkeypatch
+        self,
+        existing_file,
+        tmp_path,
+        monkeypatch,
     ):
         """Test parsing with locations file."""
         locations = tmp_path / "locations.sfp"
@@ -315,7 +321,11 @@ class TestArgumentsParse:
 
     @pytest.mark.parametrize("type_value", ["hb", "raw", "all", "HB", "RAW", "ALL"])
     def test_parse_with_type_argument_succeeds(
-        self, existing_file, type_value, monkeypatch, tmp_path
+        self,
+        existing_file,
+        type_value,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with --type argument (case insensitive)."""
         monkeypatch.chdir(tmp_path)
@@ -325,7 +335,10 @@ class TestArgumentsParse:
         assert result.type == type_value.lower()
 
     def test_parse_with_single_drop_value_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with single --drop argument."""
         monkeypatch.chdir(tmp_path)
@@ -335,25 +348,31 @@ class TestArgumentsParse:
         assert result.drop == {"hbt"}
 
     def test_parse_with_multiple_drop_values_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with multiple --drop arguments."""
         monkeypatch.chdir(tmp_path)
         args = Arguments()
         result = args.parse(
-            [str(existing_file), "--drop", "hbt", "--drop", "780", "--drop", "HbO"]
+            [str(existing_file), "--drop", "hbt", "--drop", "780", "--drop", "HbO"],
         )
 
         assert result.drop == {"hbt", "780", "hbo"}
 
     def test_parse_drop_removes_duplicates_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test that duplicate drop values are removed."""
         monkeypatch.chdir(tmp_path)
         args = Arguments()
         result = args.parse(
-            [str(existing_file), "--drop", "hbt", "--drop", "HbT", "--drop", "hbt"]
+            [str(existing_file), "--drop", "hbt", "--drop", "HbT", "--drop", "hbt"],
         )
 
         assert result.drop is not None
@@ -361,7 +380,10 @@ class TestArgumentsParse:
         assert len(result.drop) == 1
 
     def test_parse_with_verbose_flag_once_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with single -v flag."""
         monkeypatch.chdir(tmp_path)
@@ -371,7 +393,10 @@ class TestArgumentsParse:
         assert result.verbosity == 1
 
     def test_parse_with_verbose_flag_multiple_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with multiple -v flags."""
         monkeypatch.chdir(tmp_path)
@@ -381,7 +406,10 @@ class TestArgumentsParse:
         assert result.verbosity == 3
 
     def test_parse_with_verbose_long_form_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with --verbose flag."""
         monkeypatch.chdir(tmp_path)
@@ -400,7 +428,10 @@ class TestArgumentsParse:
         assert result.verbosity == 1  # --log implies at least -v
 
     def test_parse_log_with_explicit_verbosity_succeeds(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test parsing with --log flag and explicit verbosity."""
         monkeypatch.chdir(tmp_path)
@@ -431,7 +462,7 @@ class TestArgumentsParse:
                 "780",
                 "-vv",
                 "--log",
-            ]
+            ],
         )
 
         assert result.source_file == existing_file
@@ -458,7 +489,11 @@ class TestArgumentsParse:
             args.parse([str(existing_file), str(existing_file)])
 
     def test_parse_invalid_type_value_raises_error(
-        self, existing_file, monkeypatch, tmp_path, capsys
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
+        capsys,
     ):
         """Test that invalid --type value raises error."""
         monkeypatch.chdir(tmp_path)
@@ -468,7 +503,10 @@ class TestArgumentsParse:
         capsys.readouterr()
 
     def test_parse_invalid_drop_value_raises_error(
-        self, existing_file, monkeypatch, tmp_path
+        self,
+        existing_file,
+        monkeypatch,
+        tmp_path,
     ):
         """Test that invalid --drop value raises error."""
         monkeypatch.chdir(tmp_path)
@@ -507,7 +545,10 @@ class TestArgumentsParse:
         assert result is args
 
     def test_parse_removes_parser_attribute_succeeds(
-        self, existing_file, tmp_path, monkeypatch
+        self,
+        existing_file,
+        tmp_path,
+        monkeypatch,
     ):
         """Test that parse() removes the parser attribute."""
         monkeypatch.chdir(tmp_path)

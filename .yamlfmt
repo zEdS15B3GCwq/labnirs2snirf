@@ -1,0 +1,6 @@
+formatter:
+  type: basic
+  retain_line_breaks_single: true
+  line_ending: lf
+  pad_line_comments: 2
+  include_document_start: true

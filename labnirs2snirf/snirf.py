@@ -20,7 +20,8 @@ log = logging.getLogger(__name__)
 
 
 def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
-    """Write the NIRS data to a SNIRF file.
+    """
+    Write the NIRS data to a SNIRF file.
 
     Parameters
     ----------
@@ -58,7 +59,7 @@ def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
         # the use of a non-indexed entry is also allowed if there's only one.
         # Some tools (e.g. MNE) only accept a non-indexed /nirs.
         nirs_group = f.create_group("/nirs")
-        f.create_dataset("formatVersion", data=str_encode(SPECS_FORMAT_VERSION))
+        f.create_dataset("formatVersion", data=_str_encode(SPECS_FORMAT_VERSION))
         _write_metadata_group(nirs.metadata, nirs_group.create_group("metaDataTags"))
         _write_data_group(nirs.data[0], nirs_group.create_group("data1"))
         _write_probe_group(nirs.probe, nirs_group.create_group("probe"))
@@ -69,8 +70,9 @@ def write_snirf(nirs: model.Nirs, output_file: Path) -> None:
     log.debug("SNIRF file write completed")
 
 
-def str_encode(s: str) -> bytes:
-    """Encode a string to bytes using UTF-8 encoding.
+def _str_encode(s: str) -> bytes:
+    """
+    Encode a string to bytes using UTF-8 encoding.
 
     Parameters
     ----------
@@ -86,7 +88,8 @@ def str_encode(s: str) -> bytes:
 
 
 def _write_metadata_group(metadata: model.Metadata, group: h5py.Group) -> None:
-    """Write metadata to a HDF5 group following SNIRF specification.
+    """
+    Write metadata to a HDF5 group following SNIRF specification.
 
     Parameters
     ----------
@@ -105,18 +108,19 @@ def _write_metadata_group(metadata: model.Metadata, group: h5py.Group) -> None:
         log.error("Metadata group must be at /nirs/metaDataTags, got %s", group.name)
         raise SnirfWriteError("Metadata group must be at /nirs/metaDataTags")
 
-    group.create_dataset("SubjectID", data=str_encode(metadata.SubjectID))
-    group.create_dataset("MeasurementDate", data=str_encode(metadata.MeasurementDate))
-    group.create_dataset("MeasurementTime", data=str_encode(metadata.MeasurementTime))
-    group.create_dataset("LengthUnit", data=str_encode(metadata.LengthUnit))
-    group.create_dataset("TimeUnit", data=str_encode(metadata.TimeUnit))
-    group.create_dataset("FrequencyUnit", data=str_encode(metadata.FrequencyUnit))
+    group.create_dataset("SubjectID", data=_str_encode(metadata.SubjectID))
+    group.create_dataset("MeasurementDate", data=_str_encode(metadata.MeasurementDate))
+    group.create_dataset("MeasurementTime", data=_str_encode(metadata.MeasurementTime))
+    group.create_dataset("LengthUnit", data=_str_encode(metadata.LengthUnit))
+    group.create_dataset("TimeUnit", data=_str_encode(metadata.TimeUnit))
+    group.create_dataset("FrequencyUnit", data=_str_encode(metadata.FrequencyUnit))
     for field, text in metadata.additional_fields.items():
-        group.create_dataset(field, data=str_encode(text))
+        group.create_dataset(field, data=_str_encode(text))
 
 
 def _write_data_group(data: model.Data, group: h5py.Group) -> None:
-    """Write experimental data to a HDF5 group following SNIRF specification.
+    """
+    Write experimental data to a HDF5 group following SNIRF specification.
 
     Parameters
     ----------
@@ -148,11 +152,12 @@ def _write_data_group(data: model.Data, group: h5py.Group) -> None:
         ml.create_dataset("dataType", data=row.dataType, dtype="int32")
         ml.create_dataset("dataTypeIndex", data=row.dataTypeIndex, dtype="int32")
         if row.dataTypeLabel is not None:
-            ml.create_dataset("dataTypeLabel", data=str_encode(row.dataTypeLabel))
+            ml.create_dataset("dataTypeLabel", data=_str_encode(row.dataTypeLabel))
 
 
 def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
-    """Write stimulus information to HDF5 groups following SNIRF specification.
+    """
+    Write stimulus information to HDF5 groups following SNIRF specification.
 
     Parameters
     ----------
@@ -187,7 +192,7 @@ def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
             len(stim.data),
             st.name,
         )
-        st.create_dataset("name", data=str_encode(stim.name))
+        st.create_dataset("name", data=_str_encode(stim.name))
         d = np.zeros((len(stim.data), 3), dtype=stim.data.dtype)
         d[:, 0] = stim.data
         d[:, 2] = 1
@@ -195,7 +200,8 @@ def _write_stim_group(stims: list[model.Stim], group: h5py.Group) -> None:
 
 
 def _write_probe_group(probe: model.Probe, group: h5py.Group) -> None:
-    """Write probe information to a HDF5 group following SNIRF specification.
+    """
+    Write probe information to a HDF5 group following SNIRF specification.
 
     Parameters
     ----------
@@ -228,7 +234,8 @@ def _write_probe_group(probe: model.Probe, group: h5py.Group) -> None:
         group.create_dataset(
             "sourceLabels",
             data=np.array(
-                probe.sourceLabels, dtype=h5py.string_dtype(encoding="utf-8")
+                probe.sourceLabels,
+                dtype=h5py.string_dtype(encoding="utf-8"),
             ),
         )
     else:
@@ -238,7 +245,8 @@ def _write_probe_group(probe: model.Probe, group: h5py.Group) -> None:
         group.create_dataset(
             "detectorLabels",
             data=np.array(
-                probe.detectorLabels, dtype=h5py.string_dtype(encoding="utf-8")
+                probe.detectorLabels,
+                dtype=h5py.string_dtype(encoding="utf-8"),
             ),
         )
     else:

@@ -19,7 +19,18 @@ log = logging.getLogger(__name__)
 
 
 def read_layout(file: Path) -> Layout_3D:
-    """Read optode coordinates from file.
+    """
+    Read optode coordinates from file.
+
+    Parameters
+    ----------
+    file : Path
+        Path pointing to location file.
+
+    Returns
+    -------
+    dict[str, tuple[float, float, float]]
+        Dict mapping probe labels to 3D coordinates.
 
     Notes
     -----
@@ -27,16 +38,6 @@ def read_layout(file: Path) -> Layout_3D:
     with columns: label, x, y, and z, where 'x', 'y', and 'z' are the 3D coordinates of the optode.
     Labels are case-sensitive. If duplicate labels are found, a warning is logged and the last
     occurrence is used.
-
-    Parameters
-    ----------
-    file: Path
-        Path pointing to location file
-
-    Returns
-    -------
-    dict[str, tuple[float, float, float]]
-        Dict mapping probe labels to 3D coordinates.
     """
 
     import polars as pl  # pylint: disable=C0415
@@ -50,7 +51,7 @@ def read_layout(file: Path) -> Layout_3D:
                 has_header=False,
                 separator="\t",
                 schema=pl.Schema(
-                    zip(["label", "x", "y", "z"], [pl.String] + [pl.Float64] * 3)
+                    zip(["label", "x", "y", "z"], [pl.String] + [pl.Float64] * 3),
                 ),
             )
             # remove whitespace around values
@@ -78,7 +79,8 @@ def read_layout(file: Path) -> Layout_3D:
         }
 
         log.debug(
-            "Successfully read %d optode positions from layout file", len(layout_dict)
+            "Successfully read %d optode positions from layout file",
+            len(layout_dict),
         )
         return layout_dict
 
@@ -91,7 +93,7 @@ def read_layout(file: Path) -> Layout_3D:
         raise LayoutError(
             f"Failed to read layout file {file}: {e}. "
             "Ensure the file is tab-separated with four columns: label, x, y, z,"
-            " and that x, y, z are numeric values."
+            " and that x, y, z are numeric values.",
         ) from e
     except FileNotFoundError as e:
         log.exception("Layout file not found: %s", file)
@@ -103,14 +105,15 @@ def read_layout(file: Path) -> Layout_3D:
 
 
 def update_layout(data: Nirs, locations: Layout_3D) -> None:
-    """Update source and position 3D coordinates in nirs data.
+    """
+    Update source and position 3D coordinates in nirs data.
 
     Parameters
     ----------
-    data: model.Nirs
+    data : model.Nirs
         Nirs data produced by `labirs.read_nirs()`. Probes have labels (Si, Di)
         corresponding to their original numbering in the exported labNIRS data.
-    locations: dict[str, tuple[float, float, float]]
+    locations : dict[str, tuple[float, float, float]]
         Mapping of probe labels to 3D coordinates. These can be read in from file
         by `read_layout()`. Coordinates are always stored as 3D tuples - when only
         2D is available, Z is set to 0. Labels are case-sensitive.
@@ -122,7 +125,7 @@ def update_layout(data: Nirs, locations: Layout_3D) -> None:
     """
     if data.probe.sourceLabels is None and data.probe.detectorLabels is None:
         raise LayoutError(
-            "Update layout failed because there are no probe labels in NIRS data."
+            "Update layout failed because there are no probe labels in NIRS data.",
         )
 
     log.debug("Updating probe positions with %d provided locations", len(locations))
@@ -138,7 +141,8 @@ def update_layout(data: Nirs, locations: Layout_3D) -> None:
                 sources_updated += 1
             else:
                 log.warning(
-                    "Source %s missing position data, keeping default (0, 0, 0)", label
+                    "Source %s missing position data, keeping default (0, 0, 0)",
+                    label,
                 )
 
     # Update detector positions

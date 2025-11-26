@@ -2,8 +2,6 @@
 Module for handling command-line arguments.
 """
 
-from __future__ import annotations
-
 import argparse
 from pathlib import Path
 from typing import Self
@@ -16,7 +14,8 @@ class ArgumentError(Labnirs2SnirfError):
 
 
 def _file_must_exist(path_str: str) -> Path:
-    """Validate that a file path exists.
+    """
+    Validate that a file path exists.
 
     This function is used as an argparse type validator to ensure that
     a provided path points to an existing file.
@@ -45,7 +44,8 @@ def _file_must_exist(path_str: str) -> Path:
 
 
 def _file_must_not_exist(path_str: str) -> Path:
-    """Validate that a file path does not already exist.
+    """
+    Validate that a file path does not already exist.
 
     This function is used as an argparse type validator to ensure that
     a provided path does not point to an existing file, preventing accidental
@@ -75,7 +75,8 @@ def _file_must_not_exist(path_str: str) -> Path:
 
 
 def _validate_drop_value(value: str) -> str:
-    """Validate a single drop value for the --drop argument.
+    """
+    Validate a single drop value for the --drop argument.
 
     Parameters
     ----------
@@ -100,7 +101,7 @@ def _validate_drop_value(value: str) -> str:
         return value
     raise ArgumentError(
         f"Invalid drop type '{value}'. Must be 'HbT', 'HbO', 'HbR' "
-        f"(case insensitive) or a positive non-zero integer indicating wavelength."
+        f"(case insensitive) or a positive non-zero integer indicating wavelength.",
     )
 
 
@@ -110,10 +111,16 @@ def _validate_drop_value(value: str) -> str:
 
 
 class Arguments:
-    """Class to handle configuration and parsing of command-line arguments."""
+    """
+    Class to handle configuration and parsing of command-line arguments.
+
+    Parameters
+    ----------
+    progname : str or None, default=__package__
+        Program name to display in help message. If None, defaults to package name.
+    """
 
     parser: argparse.ArgumentParser
-    command: str
     source_file: Path
     target_file: Path
     type: str
@@ -123,6 +130,14 @@ class Arguments:
     drop: set[str] | None
 
     def __init__(self, progname: str | None = __package__):
+        """
+        Initialize the Arguments parser.
+
+        Parameters
+        ----------
+        progname : str or None, default=__package__
+            Program name to display in help message. If None, defaults to package name.
+        """
         parser = argparse.ArgumentParser(
             description="Convert LabNIRS data to SNIRF format.",
             allow_abbrev=False,
@@ -200,7 +215,8 @@ class Arguments:
         self.parser = parser
 
     def parse(self, args: list[str]) -> Self:
-        """Parse command-line arguments and populate the Arguments object.
+        """
+        Parse command-line arguments and populate the Arguments object.
 
         Parameters
         ----------
@@ -209,7 +225,7 @@ class Arguments:
 
         Returns
         -------
-        Arguments
+        Self
             Self with parsed argument values set as attributes.
 
         Notes
@@ -232,7 +248,23 @@ class Arguments:
         return self
 
     def __str__(self) -> str:
+        """
+        Return a string representation of the Arguments object.
+
+        Returns
+        -------
+        str
+            String showing arguments stored.
+        """
         return f"Arguments({str(self.__dict__)})"
 
     def __repr__(self) -> str:
+        """
+        Return a detailed string representation of the Arguments object.
+
+        Returns
+        -------
+        str
+            String showing arguments stored.
+        """
         return f"Arguments({repr(self.__dict__)})"
