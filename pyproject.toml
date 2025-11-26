@@ -57,10 +57,6 @@ dev = [
     "uv>=0.9.12",
 ]
 
-[project.urls]
-Homepage = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
-Repository = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
-
 [tool.ruff]
 target-version = "py314"
 
