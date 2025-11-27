@@ -1,6 +1,6 @@
 ---
 # Runs pre-commit on changed files in a PR and pushes fixes back to the PR branch
-name: pre-commit PR check
+name: PR pre-commit checks
 
 on:  # yamllint disable-line rule:truthy
   pull_request:
