@@ -12,6 +12,10 @@ on:  # yamllint disable-line rule:truthy
 permissions:
   contents: read
 
+concurrency:
+  group: release-${{ github.workflow }}
+  cancel-in-progress: false
+
 jobs:
   build:
     name: build wheel & source distribution

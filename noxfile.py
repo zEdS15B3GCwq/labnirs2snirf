@@ -29,6 +29,16 @@ def tests(session):
     session.run("pytest", "tests", *session.posargs)
 
 
+@nox.session(python=PYTHON_OTHER_VERSIONS)
+def tests_parallel(session):
+    """Run the test suite with pytest and xdist parallel execution."""
+    session.install("-e", ".")
+    session.install("pytest", "snirf", "pytest-xdist")
+
+    # Run pytest with any additional arguments passed via command line
+    session.run("pytest", "tests", "-n", "3", *session.posargs)
+
+
 @nox.session(python=PYTHON_MAIN_VERSION)
 def tests_with_coverage(session):
     """Run tests with coverage reporting."""
