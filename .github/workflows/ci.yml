@@ -82,6 +82,11 @@ jobs:
         with:
           enable-cache: true
 
+      # this nox session uses venv as backend, won't be able to install pythons
+      - name: install python
+        run: uv python install ${{ matrix.python-version }}
+        shell: bash
+
       - name: run mypy check with nox
         run: uvx nox -s install_test --force-python ${{ matrix.python-version }}
         shell: bash
