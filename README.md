@@ -4,7 +4,8 @@
 [![CodeQL](https://github.com/zEdS15B3GCwq/labnirs2snirf/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/zEdS15B3GCwq/labnirs2snirf/actions/workflows/github-code-scanning/codeql)
 [![Coverage](https://img.shields.io/endpoint?url=https://zEdS15B3GCwq.github.io/labnirs2snirf/badges/coverage.json)](https://zEdS15B3GCwq.github.io/labnirs2snirf/htmlcov/)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue)](https://zEdS15B3GCwq.github.io/labnirs2snirf/)
-[![python support](https://img.shields.io/badge/Python-3.12%20%7C%203.13%20%7C%203.14-blue?logo=python)](https://test.pypi.org/project/labnirs2snirf/)
+[![python support](https://img.shields.io/badge/Python-3.12%20%7C%203.13%20%7C%203.14-blue?logo=python)](https://pypi.org/project/labnirs2snirf/)
+[![PyPI version](https://img.shields.io/pypi/v/labnirs2snirf.svg)](https://pypi.org/project/labnirs2snirf/)
 
 <!-- INDEX_START -->
 
