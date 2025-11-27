@@ -76,23 +76,11 @@ The conversion tool is functional, with the following caveats:
 # 1. install labnirs2snirf from PyPI
 pip install labnirs2snirf
 
-# 2. step into the project folder
-cd labnirs2snirf
-
-# 3. create a Python virtual environment
-python -m venv .venv
-
-# 4. activate the virtual environment
-./.venv/Scripts/activate
-
-# 5. install labnirs2snirf and dependencies
-python -m pip install .
-
-# 6. run without parameters or with --help to print out usage instructions
+# 2. run without parameters or with --help to print out usage instructions
 labnirs2snirf
 labnirs2snirf --help
 
-# 7. convert labnirs file to .snirf
+# 3. convert labnirs file to .snirf
 # You can use one of the data files on the project repository for testing, e.g.
 # https://raw.githubusercontent.com/zEdS15B3GCwq/labnirs2snirf/refs/heads/main/data/test/small_labnirs.txt
 labnirs2snirf small_labnirs.txt small.snirf
