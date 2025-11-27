@@ -41,7 +41,7 @@ jobs:
         shell: bash
 
   type_check:
-    name: typing check
+    name: typing
     runs-on: ${{ matrix.os }}
     strategy: &default-strategy
       fail-fast: false
@@ -64,7 +64,7 @@ jobs:
         shell: bash
 
   installation:
-    name: installation check
+    name: installation
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -111,7 +111,7 @@ jobs:
         shell: bash
 
   precommit:
-    name: pre-commit checks (all files)
+    name: pre-commit (all files)
     runs-on: ${{ matrix.os }}
     strategy: *default-strategy
     steps:

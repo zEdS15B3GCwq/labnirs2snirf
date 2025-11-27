@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   prepare:
+    name: check if needed
     runs-on: ubuntu-latest
     outputs:
       is_fork: ${{ steps.check-fork.outputs.is_fork }}
@@ -67,7 +68,7 @@ jobs:
             core.setOutput("has_files", filenames.length > 0 ? "true" : "false");
 
   precommit:
-    name: pre-commit checks (changed files)
+    name: pre-commit (changed files)
     needs: prepare
     runs-on: ubuntu-latest
     if: |
@@ -166,7 +167,7 @@ jobs:
           retention-days: 1
 
   push:
-    name: push pre-commit fixes
+    name: push fixes
     needs: precommit
     runs-on: ubuntu-latest
     if: needs.precommit.outputs.changes_detected == 'true'
