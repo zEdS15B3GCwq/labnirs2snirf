@@ -2,45 +2,6 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
-[project]
-name = "labnirs2snirf"
-version = "0.1.3"
-description = "Converts exported Shimadzu LabNirs data to SNIRF format."
-readme = "README.md"
-requires-python = ">=3.12"
-license = {file = "LICENSE"}
-authors = [
-    {name = "Tamas Fehervari", email = "58502181+zEdS15B3GCwq@users.noreply.github.com"}
-]
-keywords = ["Shimadzu", "Labnirs", "snirf", "nirs", "convert"]
-classifiers = [
-    "Development Status :: 4 - Beta",
-    "Topic :: Scientific/Engineering",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: MacOS",
-    "Operating System :: Microsoft :: Windows",
-    "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14",
-]
-dependencies = [
-    "polars>=1.35.2",
-    "h5py>=3.15.1",
-    "numpy>=2.3.5",
-]
-
-[project.urls]
-Homepage = "https://zeds15b3gcwq.github.io/labnirs2snirf/"
-Repository = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
-Documentation = "https://zeds15b3gcwq.github.io/labnirs2snirf/"
-"Bug Tracker" = "https://github.com/zEdS15B3GCwq/labnirs2snirf/issues"
-
-[project.scripts]
-labnirs2snirf = "labnirs2snirf.labnirs2snirf:main"
-
 [dependency-groups]
 # Only install this dev dependency group if these tools are not available elsewhere.
 # For example, if using uv anyway, running tests and pre-commit hooks is much
@@ -49,29 +10,69 @@ labnirs2snirf = "labnirs2snirf.labnirs2snirf:main"
 # isolated environments. However, it can be useful to have some packages available,
 # e.g. pytest for VSCode to be able to discover and run tests.
 dev = [
-    "nox>=2025.11.12",
-    "prek>=0.2.18",
-    "pytest>=9.0.1",
-    "pytest-cov>=7.0.0",
-    "snirf>=0.8.0",
-    "uv>=0.9.12",
+  "nox>=2025.11.12",
+  "prek>=0.2.18",
+  "pytest>=9.0.1",
+  "pytest-cov>=7.0.0",
+  "snirf>=0.8.0",
+  "uv>=0.9.12"
+]
+
+[project]
+name = "labnirs2snirf"
+version = "0.1.3"
+description = "Converts exported Shimadzu LabNirs data to SNIRF format."
+readme = "README.md"
+requires-python = ">=3.12"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Tamas Fehervari", email = "58502181+zEdS15B3GCwq@users.noreply.github.com"}
+]
+keywords = ["Shimadzu", "Labnirs", "snirf", "nirs", "convert"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Topic :: Scientific/Engineering",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: MacOS",
+  "Operating System :: Microsoft :: Windows",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14"
+]
+dependencies = [
+  "polars>=1.35.2",
+  "h5py>=3.15.1",
+  "numpy>=2.3.5"
+]
+
+[project.scripts]
+labnirs2snirf = "labnirs2snirf.labnirs2snirf:main"
+
+[project.urls]
+Homepage = "https://zeds15b3gcwq.github.io/labnirs2snirf/"
+Repository = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
+Documentation = "https://zeds15b3gcwq.github.io/labnirs2snirf/"
+"Bug Tracker" = "https://github.com/zEdS15B3GCwq/labnirs2snirf/issues"
+
+[tool.numpydoc_validation]
+checks = [
+  "all", # report on all checks, except the below
+  "EX01",
+  "SA01",
+  "ES01"
+]
+# exclude_files not working yet in numpydoc_validation
+exclude_files = [
+   # don't process filepaths that match these regex
+  "^tests/.*",
+  "^./noxfile.py"
 ]
 
 [tool.ruff]
 target-version = "py314"
-
-[tool.numpydoc_validation]
-checks = [
-    "all",   # report on all checks, except the below
-    "EX01",
-    "SA01",
-    "ES01",
-]
-# exclude_files not working yet in numpydoc_validation
-exclude_files = [ # don't process filepaths that match these regex
-    "^tests/.*",
-    "^./noxfile.py",
-]
 
 [tool.uv]
 # only install dev dependencies if explicitly requested
