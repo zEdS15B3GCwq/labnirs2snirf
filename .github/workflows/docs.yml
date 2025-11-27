@@ -15,7 +15,7 @@ concurrency:
 
 jobs:
   build:
-    name: build docs, coverage and badge (python ${{ matrix.python-version }} on ${{ matrix.os }})
+    name: build documentation, coverage and badge
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -63,7 +63,7 @@ jobs:
           if-no-files-found: error
 
   docs:
-    name: deploy docs
+    name: deploy to GitHub Pages
     runs-on: ubuntu-latest
     needs: build
     permissions:

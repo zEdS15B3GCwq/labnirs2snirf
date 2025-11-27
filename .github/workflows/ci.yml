@@ -36,12 +36,12 @@ jobs:
         with:
           enable-cache: true
 
-      - name: run tests
+      - name: run tests with nox
         run: uvx nox -s tests --force-python ${{ matrix.python-version }}
         shell: bash
 
   type_check:
-    name: type check with mypy
+    name: typing check
     runs-on: ${{ matrix.os }}
     strategy: &default-strategy
       matrix:
@@ -63,7 +63,7 @@ jobs:
         shell: bash
 
   build_docs:
-    name: Check that docs can be built
+    name: build documentation
     runs-on: ${{ matrix.os }}
     strategy: *default-strategy
     steps:
@@ -82,7 +82,7 @@ jobs:
         shell: bash
 
   precommit:
-    name: pre-commit checks with prek (all files)
+    name: pre-commit checks (all files)
     runs-on: ${{ matrix.os }}
     strategy: *default-strategy
     steps:
@@ -104,7 +104,7 @@ jobs:
           restore-keys: |
             prek-${{ matrix.os }}-${{ matrix.python-version }}
 
-      - name: run pre-commit (PR)
+      - name: run prek (on PR)
         if: github.event_name == 'pull_request'
         run: |
           uvx --python ${{ matrix.python-version }} \
@@ -114,7 +114,7 @@ jobs:
             --color=always
         shell: bash
 
-      - name: run pre-commit (push to main)
+      - name: run prek (on push to main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           uvx --python ${{ matrix.python-version }} \

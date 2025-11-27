@@ -14,7 +14,7 @@ permissions:
 
 jobs:
   build:
-    name: build (python ${{ matrix.python-version }} on ${{ matrix.os }})
+    name: build wheel & source distribution
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -26,7 +26,7 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: install latest version of uv
+      - name: install uv
         uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3  # v7.1.3
         with:
           enable-cache: true
@@ -55,7 +55,7 @@ jobs:
             -- \
             python -c "import testmodule; print(testmodule.__name__)"
 
-      - name: upload dist files
+      - name: upload distribution files
         uses: actions/upload-artifact@v5
         with:
           name: distfiles
@@ -63,7 +63,7 @@ jobs:
           if-no-files-found: error
 
   upload-github:
-    name: upload dist files (GitHub)
+    name: upload to GitHub
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -96,13 +96,14 @@ jobs:
     permissions:
       id-token: write
     steps:
-      - name: download dist files
+      - name: download distribution files
         uses: actions/download-artifact@v6
         with:
           name: distfiles
           path: dist/
 
-      - uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e  # v1.13.0
+      - name: publish to TestPyPI
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e  # v1.13.0
         with:
           print-hash: true
           repository-url: https://test.pypi.org/legacy/
