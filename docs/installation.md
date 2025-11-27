@@ -5,7 +5,15 @@
 - Python 3.12 or higher
 - pip package manager
 
-## Install from Source
+## Install from PyPI
+
+Install labnirs2snirf using pip:
+
+```bash
+pip install labnirs2snirf
+```
+
+## Install from Source (for development)
 
 To install the latest development version from source:
 
@@ -13,14 +21,6 @@ To install the latest development version from source:
 git clone git clone https://github.com/zEdS15B3GCwq/labnirs2snirf.git
 cd labnirs2snirf
 pip install .
-```
-
-## Install from PyPI (not published yet)
-
-Install labnirs2snirf using pip:
-
-```bash
-pip install labnirs2snirf
 ```
 
 ## Verify Installation
