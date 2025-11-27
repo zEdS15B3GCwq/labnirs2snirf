@@ -36,14 +36,15 @@ jobs:
         with:
           enable-cache: true
 
-      - name: run tests
+      - name: run tests with nox
         run: uvx nox -s tests --force-python ${{ matrix.python-version }}
         shell: bash
 
   type_check:
-    name: type check with mypy
+    name: typing
     runs-on: ${{ matrix.os }}
     strategy: &default-strategy
+      fail-fast: false
       matrix:
         python-version: ["3.14"]
         os: [ubuntu-latest]
@@ -62,8 +63,55 @@ jobs:
         run: uvx nox -s type_check --force-python ${{ matrix.python-version }}
         shell: bash
 
+  installation:
+    name: installation
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: install uv
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3  # v7.1.3
+        with:
+          enable-cache: true
+
+      # this nox session uses venv as backend, won't be able to install pythons
+      - name: install python
+        run: uv python install ${{ matrix.python-version }}
+        shell: bash
+
+      - name: run mypy check with nox
+        run: uvx nox -s install_test --force-python ${{ matrix.python-version }}
+        shell: bash
+
+  build_docs:
+    name: build documentation
+    runs-on: ${{ matrix.os }}
+    strategy: *default-strategy
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: install uv
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3  # v7.1.3
+        with:
+          enable-cache: true
+
+      - name: run mypy check with nox
+        run: uvx nox -s docs --force-python ${{ matrix.python-version }}
+        shell: bash
+
   precommit:
-    name: pre-commit checks with prek (all files)
+    name: pre-commit (all files)
     runs-on: ${{ matrix.os }}
     strategy: *default-strategy
     steps:
@@ -85,7 +133,7 @@ jobs:
           restore-keys: |
             prek-${{ matrix.os }}-${{ matrix.python-version }}
 
-      - name: run pre-commit (PR)
+      - name: run prek (on PR)
         if: github.event_name == 'pull_request'
         run: |
           uvx --python ${{ matrix.python-version }} \
@@ -95,7 +143,7 @@ jobs:
             --color=always
         shell: bash
 
-      - name: run pre-commit (push to main)
+      - name: run prek (on push to main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           uvx --python ${{ matrix.python-version }} \

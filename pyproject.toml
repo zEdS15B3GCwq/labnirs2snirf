@@ -12,11 +12,15 @@ license = {file = "LICENSE"}
 authors = [
     {name = "Tamas Fehervari", email = "58502181+zEdS15B3GCwq@users.noreply.github.com"}
 ]
-keywords = ["Shimadzu", "Labnirs", "SNIRF", "convert"]
+keywords = ["Shimadzu", "Labnirs", "snirf", "nirs", "convert"]
 classifiers = [
     "Development Status :: 4 - Beta",
+    "Topic :: Scientific/Engineering",
     "Intended Audience :: Science/Research",
     "License :: OSI Approved :: MIT License",
+    "Operating System :: MacOS",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -27,6 +31,15 @@ dependencies = [
     "h5py>=3.15.1",
     "numpy>=2.3.5",
 ]
+
+[project.urls]
+Homepage = "https://zeds15b3gcwq.github.io/labnirs2snirf/"
+Repository = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
+Documentation = "https://zeds15b3gcwq.github.io/labnirs2snirf/"
+"Bug Tracker" = "https://github.com/zEdS15B3GCwq/labnirs2snirf/issues"
+
+[project.scripts]
+labnirs2snirf = "labnirs2snirf.labnirs2snirf:main"
 
 [dependency-groups]
 # Only install this dev dependency group if these tools are not available elsewhere.
@@ -43,10 +56,6 @@ dev = [
     "snirf>=0.8.0",
     "uv>=0.9.12",
 ]
-
-[project.urls]
-Homepage = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
-Repository = "https://github.com/zEdS15B3GCwq/labnirs2snirf"
 
 [tool.ruff]
 target-version = "py314"

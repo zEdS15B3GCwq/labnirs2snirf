@@ -1,6 +1,6 @@
 ---
 # Runs pre-commit on changed files in a PR and pushes fixes back to the PR branch
-name: pre-commit PR check
+name: PR pre-commit
 
 on:  # yamllint disable-line rule:truthy
   pull_request:
@@ -15,6 +15,7 @@ permissions:
 
 jobs:
   prepare:
+    name: check if needed
     runs-on: ubuntu-latest
     outputs:
       is_fork: ${{ steps.check-fork.outputs.is_fork }}
@@ -67,8 +68,7 @@ jobs:
             core.setOutput("has_files", filenames.length > 0 ? "true" : "false");
 
   precommit:
-    name: |
-      pre-commit checks with prek (changed files only)
+    name: pre-commit (changed files)
     needs: prepare
     runs-on: ubuntu-latest
     if: |
@@ -106,7 +106,7 @@ jobs:
           restore-keys: |
             prek-${{ matrix.os }}-${{ matrix.python-version }}
 
-      - name: run pre-commit checks with prek
+      - name: run prek
         id: run-precommit
         continue-on-error: true
         env:
@@ -167,7 +167,7 @@ jobs:
           retention-days: 1
 
   push:
-    name: push pre-commit fixes
+    name: push fixes
     needs: precommit
     runs-on: ubuntu-latest
     if: needs.precommit.outputs.changes_detected == 'true'

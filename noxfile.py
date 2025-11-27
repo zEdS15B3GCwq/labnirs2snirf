@@ -67,6 +67,7 @@ def docs(session):
     """Build the documentation with Sphinx."""
     session.install("-e", ".")
     session.install("sphinx", "sphinx-rtd-theme", "myst-parser")
+    session.run("python", "docs/generate_index.py")
     session.run("sphinx-build", "-b", "html", "docs", "docs/_build/html")
 
 
@@ -76,9 +77,12 @@ def docs_clean(session):
     import shutil
     from pathlib import Path
 
+    index = Path("docs/index.md")
+    if index.exists():
+        index.unlink()
+        session.log("Deleted docs/index.md")
+
     build_dir = Path("docs/_build")
     if build_dir.exists():
         shutil.rmtree(build_dir)
         session.log("Cleaned documentation build directory")
-    else:
-        session.log("Documentation build directory does not exist")

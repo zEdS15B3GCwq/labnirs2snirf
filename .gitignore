@@ -73,3 +73,5 @@ dmypy.json
 *.h5
 *.log
 *.tmp
+*.bat
+docs/index.md

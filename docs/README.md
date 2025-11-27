@@ -16,12 +16,14 @@ This will:
 
 1. Create a clean virtual environment
 2. Install all required dependencies
-3. Build the HTML documentation
-4. Output to `docs/_build/html/`
+3. Generate index.md by injecting the project readme into index.template
+4. Build the HTML documentation
+5. Output to `docs/_build/html/`
 
 ### Using Python module
 
 ```bash
+python docs/generate_index.py
 sphinx-build -b html docs/ docs/_build/
 ```
 
