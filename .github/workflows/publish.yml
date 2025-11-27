@@ -43,7 +43,7 @@ jobs:
             --python ${{ matrix.python-version }} \
             --with dist/*.whl \
             -- \
-            python -c "import testmodule; print(testmodule.__name__)"
+            python -c "import labnirs2snirf; print(labnirs2snirf.__name__)"
 
       - name: import test (source)
         run: |
@@ -53,7 +53,7 @@ jobs:
             --python ${{ matrix.python-version }} \
             --with dist/*.tar.gz \
             -- \
-            python -c "import testmodule; print(testmodule.__name__)"
+            python -c "import labnirs2snirf; print(labnirs2snirf.__name__)"
 
       - name: upload distribution files
         uses: actions/upload-artifact@v5
