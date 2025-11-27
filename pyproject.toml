@@ -66,7 +66,7 @@ checks = [
 ]
 # exclude_files not working yet in numpydoc_validation
 exclude_files = [
-   # don't process filepaths that match these regex
+  # don't process filepaths that match these regex
   "^tests/.*",
   "^./noxfile.py"
 ]
