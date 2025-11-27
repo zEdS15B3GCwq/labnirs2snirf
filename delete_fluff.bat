@@ -3,6 +3,7 @@ del .coverage
 del labnirs2snirf.log
 del pysnirf2.log
 del coverage.xml
+del docs/index.md
 rmdir /s /q .mypy_cache
 rmdir /s /q .nox
 rmdir /s /q .pytest_cache
