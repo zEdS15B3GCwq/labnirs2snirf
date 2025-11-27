@@ -65,10 +65,7 @@ jobs:
   build_docs:
     name: Check that docs can be built
     runs-on: ${{ matrix.os }}
-    strategy: &default-strategy
-      matrix:
-        python-version: ["3.14"]
-        os: [ubuntu-latest]
+    strategy: *default-strategy
     steps:
       - name: checkout code
         uses: actions/checkout@v5
