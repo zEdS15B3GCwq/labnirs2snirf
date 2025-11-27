@@ -44,6 +44,7 @@ jobs:
     name: typing check
     runs-on: ${{ matrix.os }}
     strategy: &default-strategy
+      fail-fast: false
       matrix:
         python-version: ["3.14"]
         os: [ubuntu-latest]
@@ -60,6 +61,29 @@ jobs:
 
       - name: run mypy check with nox
         run: uvx nox -s type_check --force-python ${{ matrix.python-version }}
+        shell: bash
+
+  installation:
+    name: installation check
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: install uv
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3  # v7.1.3
+        with:
+          enable-cache: true
+
+      - name: run mypy check with nox
+        run: uvx nox -s install_test --force-python ${{ matrix.python-version }}
         shell: bash
 
   build_docs:
