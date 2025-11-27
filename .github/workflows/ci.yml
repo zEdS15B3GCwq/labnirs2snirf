@@ -62,6 +62,28 @@ jobs:
         run: uvx nox -s type_check --force-python ${{ matrix.python-version }}
         shell: bash
 
+  build_docs:
+    name: Check that docs can be built
+    runs-on: ${{ matrix.os }}
+    strategy: &default-strategy
+      matrix:
+        python-version: ["3.14"]
+        os: [ubuntu-latest]
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: install uv
+        uses: astral-sh/setup-uv@5a7eac68fb9809dea845d802897dc5c723910fa3  # v7.1.3
+        with:
+          enable-cache: true
+
+      - name: run mypy check with nox
+        run: uvx nox -s docs --force-python ${{ matrix.python-version }}
+        shell: bash
+
   precommit:
     name: pre-commit checks with prek (all files)
     runs-on: ${{ matrix.os }}
