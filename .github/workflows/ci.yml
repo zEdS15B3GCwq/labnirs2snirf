@@ -10,7 +10,12 @@ on:  # yamllint disable-line rule:truthy
 
 # Cancel tests if a new commit is pushed to the same PR
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: >-
+    ${{ github.workflow }}-${{
+      github.event_name == 'pull_request' && 'pr' || 'push'
+    }}-${{
+      github.event.pull_request.number || github.ref
+    }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
@@ -37,7 +42,7 @@ jobs:
           enable-cache: true
 
       - name: run tests with nox
-        run: uvx nox -s tests --force-python ${{ matrix.python-version }}
+        run: uvx nox -s tests_parallel --force-python ${{ matrix.python-version }}
         shell: bash
 
   type_check:
@@ -82,7 +87,7 @@ jobs:
         with:
           enable-cache: true
 
-      # this nox session uses venv as backend, won't be able to install pythons
+      # this nox session uses venv as backend, cannot install python
       - name: install python
         run: uv python install ${{ matrix.python-version }}
         shell: bash

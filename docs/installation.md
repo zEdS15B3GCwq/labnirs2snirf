@@ -37,10 +37,3 @@ python -m labnirs2snirf
 # test if module can be imported for programmatic use
 python -c "import labnirs2snirf; print(labnirs2snirf.__name__)"
 ```
-
-## Dependencies
-
-The package has the following core dependencies:
-
-- **polars** (>=1.24.0) - DataFrame operations for data processing
-- **h5py** (>=3.13.0) - HDF5 file format support for SNIRF output
