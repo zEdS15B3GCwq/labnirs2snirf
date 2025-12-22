@@ -31,7 +31,7 @@ jobs:
           persist-credentials: false
 
       - name: install uv
-        uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244  # v7.1.4
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
         with:
           enable-cache: true
 
@@ -60,7 +60,7 @@ jobs:
             python -c "import labnirs2snirf; print(labnirs2snirf.__name__)"
 
       - name: upload distribution files
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: distfiles
           path: dist/
@@ -79,7 +79,7 @@ jobs:
           persist-credentials: false
 
       - name: download dist files
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: distfiles
           path: dist/
@@ -101,7 +101,7 @@ jobs:
       id-token: write
     steps:
       - name: download distribution files
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: distfiles
           path: dist/
