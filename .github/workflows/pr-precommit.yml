@@ -94,12 +94,12 @@ jobs:
           fetch-depth: 0
 
       - name: install uv
-        uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244  # v7.1.4
+        uses: astral-sh/setup-uv@681c641aba71e4a1c380be3ab5e12ad51f415867  # v7.1.6
         with:
           enable-cache: true
 
       - name: save prek cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/prek
           key: prek-${{ matrix.os }}-${{ matrix.python-version }}-${{ hashFiles('.pre-commit-config.yaml') }}  # yamllint disable-line rule:line-length
@@ -158,7 +158,7 @@ jobs:
 
       - name: upload modified files as artifact
         if: steps.modified.outputs.changes == 'true'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ steps.artifact-name.outputs.name }}
           path: |
@@ -194,7 +194,7 @@ jobs:
           fetch-depth: 0
 
       - name: download artifact with fixes
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ needs.precommit.outputs.artifact_name }}
           path: .
