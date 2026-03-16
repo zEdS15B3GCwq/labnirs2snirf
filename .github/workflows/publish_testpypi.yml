@@ -54,7 +54,7 @@ jobs:
             python -c "import labnirs2snirf; print(labnirs2snirf.__name__)"
 
       - name: upload distribution files
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: distfiles
           path: dist/
