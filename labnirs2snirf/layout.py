@@ -5,6 +5,8 @@ Functions related to importing probe positions.
 import logging
 from pathlib import Path
 
+from polars.dataframe.frame import DataFrame
+
 from .error import Labnirs2SnirfError
 from .model import Nirs
 
@@ -32,6 +34,14 @@ def read_layout(file: Path) -> Layout_3D:
     dict[str, tuple[float, float, float]]
         Dict mapping probe labels to 3D coordinates.
 
+    Raises
+    ------
+    LayoutError
+        If the file cannot be read or does not contain the expected columns.
+    pl.exceptions.NoDataError
+        If the file is empty
+    other exceptions are propagated
+
     Notes
     -----
     Location files are expected to follow the .sfp format, which is a tab-separated text file
@@ -45,7 +55,7 @@ def read_layout(file: Path) -> Layout_3D:
     log.debug("Reading layout file: %s", file)
 
     try:
-        locations = (
+        locations: DataFrame = (
             pl.scan_csv(
                 file,
                 has_header=False,
@@ -53,11 +63,18 @@ def read_layout(file: Path) -> Layout_3D:
                 schema=pl.Schema(
                     zip(["label", "x", "y", "z"], [pl.String] + [pl.Float64] * 3),
                 ),
+                raise_if_empty=True,
             )
             # remove whitespace around values
             .with_columns(pl.col(pl.String).str.strip_chars())
             .collect()
         )
+
+        # Polars 1.* will raise a pl.exceptions.NoDataError if the file is empty.
+        # Polars 2.0.0 introduced a breaking change where `raise_if_empty` is
+        # now automatically disabled when `has_header=False` and a schema is
+        # provided. "raise_if_empty=True" is used to force the old behaviour.
+        # https://docs.pola.rs/releases/upgrade/2/#automatically-disable-raise_if_empty-when-has_headerfalse-and-schema-is-given
 
         # Check for duplicate labels
         if locations.height != locations.select("label").unique().height:
